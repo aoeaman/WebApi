@@ -5,8 +5,8 @@ using CarPoolApplication.Models;
 
 namespace CodeFirst.Services.Interfaces
 {
-    public interface IService<T> where T:class
-    {
+    public interface IService<T> 
+    { 
         void Add(T entity);
         T Create(T entity);
         void Delete(int iD);

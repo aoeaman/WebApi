@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CodeFirst.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200210144554_abc")]
-    partial class abc
+    [Migration("20200211130234_NewMigration")]
+    partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,9 @@ namespace CodeFirst.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Destination")
-                        .HasColumnType("int");
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<float>("Fare")
                         .HasColumnType("real");
@@ -43,8 +44,9 @@ namespace CodeFirst.Migrations
                     b.Property<byte>("Seats")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("Source")
-                        .HasColumnType("int");
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -107,8 +109,9 @@ namespace CodeFirst.Migrations
                     b.Property<int>("CurrentLocaton")
                         .HasColumnType("int");
 
-                    b.Property<int>("Destination")
-                        .HasColumnType("int");
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int>("DriverID")
                         .HasColumnType("int");
@@ -122,8 +125,9 @@ namespace CodeFirst.Migrations
                     b.Property<byte>("SeatsAvailable")
                         .HasColumnType("tinyint");
 
-                    b.Property<int>("Source")
-                        .HasColumnType("int");
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -138,8 +142,6 @@ namespace CodeFirst.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("DriverID");
-
-                    b.HasIndex("VehicleID");
 
                     b.ToTable("Offers");
                 });
@@ -225,9 +227,6 @@ namespace CodeFirst.Migrations
                     b.Property<int>("OfferID")
                         .HasColumnType("int");
 
-                    b.Property<int>("SequenceNumber")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("OfferID");
@@ -255,12 +254,6 @@ namespace CodeFirst.Migrations
                     b.HasOne("CarPoolApplication.Models.Driver", "Driver")
                         .WithMany("Offers")
                         .HasForeignKey("DriverID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CarPoolApplication.Models.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

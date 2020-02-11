@@ -13,7 +13,7 @@
 
     public enum Cities
     {
-        Ahemadabad,Banglore, Chandigarh,Chennai, Dehradun, Gwalior,Hyderabad, Mumbai,Pune ,Vizag 
+        Ahemadabad,Banglore,Chandigarh,Chennai, Dehradun, Gwalior,Hyderabad,Mumbai,Patna,Pune ,Vizag 
     }
     public enum VehicleType
     {

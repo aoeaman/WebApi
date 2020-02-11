@@ -1,11 +1,7 @@
 ﻿using CarPoolApplication.Models;
-using CarPoolApplication.Services;
 using CodeFirst.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CodeFirst.Controllers
 {
@@ -20,9 +16,12 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public void Create(Offer offer)
+        public string Create([FromBody]Offer offer)
         {
+            if (!ModelState.IsValid)
+                return "Bad";
             _repos.Add(_repos.Create(offer));
+            return "Ok";
         }
         [Route( "GetAll")]
         [HttpGet]
@@ -36,6 +35,15 @@ namespace CodeFirst.Controllers
         public Offer GetByID(int id)
         {
             return _repos.GetByID(id);
+        }
+        [Route("Cancel/{id:int}")]
+        [HttpGet]
+        public string Cancel(int id)
+        {
+            if (!ModelState.IsValid)
+                return "Bad";
+            _repos.Delete(id);
+            return "Ok";
         }
     }
 }

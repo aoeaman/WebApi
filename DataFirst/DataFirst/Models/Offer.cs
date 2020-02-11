@@ -14,12 +14,14 @@ namespace CarPoolApplication.Models
         [Column(TypeName = "nvarchar(10)")]
         public StatusOfRide Status { get; set; }
         [Required]
-        public int Source { get; set; }
+        [Column(TypeName = "nvarchar(15)")]
+        public Cities Source { get; set; }
         [Required]
-        public int Destination { get; set; }
-        public int CurrentLocaton { get; set; }       
+        [Column(TypeName = "nvarchar(15)")]
+        public Cities Destination { get; set; }
+        [Column(TypeName = "nvarchar(15)")]
+        public Cities CurrentLocaton { get; set; }       
         public virtual Driver Driver { get; set; }
-        public virtual Vehicle Vehicle { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         [Required]

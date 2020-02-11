@@ -12,8 +12,6 @@ namespace CarPoolApplication.Models
         [Column(TypeName ="nvarchar(10)")]
         public Cities City { get; set; }
         [Required]
-        public int SequenceNumber { get; set; }
-        [Required]
         public virtual Offer Offer { get; set; }
     }
 }

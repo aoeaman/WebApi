@@ -11,10 +11,7 @@ namespace CarPoolApplication.Models
         public string Number { get; set; }
         public byte Seats { get; set; }
         public bool IsActive { get; set; }
-        [Required]
-        public VehicleType Type { get; set; }
-
-        [Required]
+        public VehicleType Type { get; set; }      
         public virtual Driver Driver { get; set; }
     }
 }

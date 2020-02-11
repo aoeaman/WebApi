@@ -17,8 +17,15 @@ namespace CodeFirst.Controllers
         {
             _repos = repos;
         }
-
-
+        [Route("Create")]
+        [HttpPost]
+        public string Create([FromBody] Rider rider)
+        {
+            if (!ModelState.IsValid)
+                return "Bad";
+            _repos.Add(_repos.Create(rider));
+            return "Ok";
+        }
 
         [Route("GetAll")]
         [HttpGet]

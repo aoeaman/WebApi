@@ -16,9 +16,12 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public void Create(Booking booking)
+        public string Create(Booking booking)
         {
+            if (!ModelState.IsValid)
+                return "Bad";
             _repos.Add(_repos.Create(booking));
+            return "Ok";
         }
 
         [Route("GetByID/{id:int}")]

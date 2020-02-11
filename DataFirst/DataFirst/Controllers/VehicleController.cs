@@ -1,11 +1,7 @@
 ﻿using CarPoolApplication.Models;
-using CarPoolApplication.Services;
 using CodeFirst.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CodeFirst.Controllers
 {
@@ -20,9 +16,12 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public void Create(Vehicle vehicle)
+        public string Create([FromBody] Vehicle vehicle)
         {
+            if (!ModelState.IsValid)
+                return "Bad";
             _repos.Add(_repos.Create(vehicle));
+            return "Ok";
         }
 
         [Route("GetAll")]

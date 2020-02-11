@@ -26,7 +26,7 @@ namespace CodeFirst.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\aman.j\\Documents\\Sample.mdf;Integrated Security=True;Connect Timeout=30");
+                optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\aman.j\\Documents\\CARPOOL.mdf;Integrated Security=True;Connect Timeout=30");
             }
         }
 
@@ -36,6 +36,13 @@ namespace CodeFirst.Models
             modelBuilder.Entity<ViaPoints>().Property(c => c.City).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
             modelBuilder.Entity<Offer>().Property(c => c.Status).HasConversion(v => v.ToString(), v => (StatusOfRide)Enum.Parse(typeof(StatusOfRide), v));
             modelBuilder.Entity<Booking>().Property(c => c.Status).HasConversion(v => v.ToString(), v => (StatusOfRide)Enum.Parse(typeof(StatusOfRide), v));
+
+            modelBuilder.Entity<Offer>().Property(c => c.Source).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
+            modelBuilder.Entity<Offer>().Property(c => c.Destination).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
+            modelBuilder.Entity<Offer>().Property(c => c.CurrentLocaton).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
+            modelBuilder.Entity<Booking>().Property(c => c.Source).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
+            modelBuilder.Entity<Booking>().Property(c => c.Destination).HasConversion(v => v.ToString(), v => (Cities)Enum.Parse(typeof(Cities), v));
+
             modelBuilder.Entity<Vehicle>().Property(c => c.Type).HasConversion(v => v.ToString(), v => (VehicleType)Enum.Parse(typeof(VehicleType), v));
         }
 

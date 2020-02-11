@@ -10,43 +10,50 @@ using System.Linq;
 namespace CarPoolApplication.Services
 {
     public class OfferService:IOfferService
+
     {
-        UtilityService Service;
+        readonly UtilityService Service;
         Context _context;
         public OfferService(Context context)
         {
             Service = new UtilityService();
             _context = context;
         }
-
         public void Add(Offer offer)
-        {
+        {           
             _context.Offers.Add(offer);
-        }
-
-        
-        public Offer Create(Offer Offer)
+            _context.SaveChanges();
+        }       
+        public Offer Create(Offer offer)
         {
-            Offer.ID = Service.GenerateID();
-            return Offer;
+            offer.ID = Service.GenerateID();
+            foreach (var x in offer.ViaPoints.ToList())
+            {
+                x.OfferID = offer.ID;
+            }            
+            offer.Status = StatusOfRide.Created;
+            offer.CurrentLocaton = offer.Source;
+            return offer;
         }
-
         public List<Offer> GetAll()
         {
             return _context.Offers.ToList() ;
         }
-
-        public void Delete(int iD)
+        public void Cancel(int iD)
         {
-            _context.Offers.Remove(_context.Offers.Find(iD));
+            _context.Offers.Find(iD).Status = StatusOfRide.Cancelled;
+            _context.SaveChanges();
         }
-
         public Offer GetByID(int iD)
         {
             return _context.Offers.Find(iD);
         }
-
         public Offer Update(Offer Offer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(int iD)
         {
             throw new NotImplementedException();
         }
