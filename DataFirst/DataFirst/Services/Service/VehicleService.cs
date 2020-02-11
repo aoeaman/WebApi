@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CarPoolApplication.Models;
-using CarPoolApplication.Services.Interfaces;
-using Newtonsoft.Json;
+using CodeFirst.Models;
+using CodeFirst.Services.Interfaces;
 
 namespace CarPoolApplication.Services
 {
     public class VehicleService:IVehicleService
     {
         UtilityService Service;
-        private readonly string VehiclePath = "C:\\repos\\CarPoolApplication\\CarPoolApplication\\Vehicle.JSON";
-        private List<Vehicle> Vehicles;
-
-        public VehicleService()
+        Context _context;
+        public VehicleService(Context context)
         {
             Service = new UtilityService();
-            Vehicles = JsonConvert.DeserializeObject<List<Vehicle>>(File.ReadAllText(VehiclePath)) ?? new List<Vehicle>();
+            _context = context;
         }
 
         public void Add(Vehicle vehicle)
         {
-            Vehicles.Add(vehicle);
+            _context.Vehicles.Add(vehicle);
+            _context.SaveChanges();
         }
         public Vehicle Create(Vehicle vehicle)
         {
@@ -30,18 +27,18 @@ namespace CarPoolApplication.Services
             return vehicle;
         }
 
-        public List<Vehicle> GetAll()
+        public void Delete(int iD)
         {
-            return Vehicles;
-        }
-        public Vehicle GetVehicleByID(int iD)
-        {
-            return Vehicles.Find(_ => _.ID == iD);
+            throw new System.NotImplementedException();
         }
 
-        public void SaveData()
+        public List<Vehicle> GetAll()
         {
-            File.WriteAllText(VehiclePath, JsonConvert.SerializeObject(Vehicles));
+            return _context.Vehicles.ToList();
+        }
+        public Vehicle GetByID(int iD)
+        {
+            return _context.Vehicles.Find(iD);
         }
     }
 }

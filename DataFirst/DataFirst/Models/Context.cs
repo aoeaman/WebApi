@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarPoolApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,6 +16,7 @@ namespace CodeFirst.Models
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<ViaPoints> ViaPoints { get; set; }
+
         public Context(DbContextOptions <Context> options)
             : base(options)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarPoolApplication.Models
 {
@@ -13,6 +14,7 @@ namespace CarPoolApplication.Models
 
         public virtual ICollection<Offer> Offers { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
+        [Required]
         public string DrivingLiscenceNumber { get; set; }
     }
 }

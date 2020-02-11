@@ -4,13 +4,14 @@ using CarPoolApplication.Models;
 using CodeFirst.Models;
 using Newtonsoft.Json;
 using System.Linq;
+using CodeFirst.Services.Interfaces;
 
 namespace CarPoolApplication.Services
 {
-    public class RiderService:IService<Rider>
+    public class RiderService : IService<Rider>
     {
         UtilityService Service;
-        
+
         Context _context;
         public RiderService(Context context)
         {
@@ -19,7 +20,7 @@ namespace CarPoolApplication.Services
         }
 
         public Rider Create(Rider rider)
-        {              
+        {
             rider.ID = Service.GenerateID();
             return rider;
         }
@@ -36,10 +37,14 @@ namespace CarPoolApplication.Services
             return _context.Riders.ToList();
         }
 
-        public void SaveData()
+        public Rider GetByID(int id)
         {
-
+            return _context.Riders.Find(id);
         }
 
+        public void Delete(int iD)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

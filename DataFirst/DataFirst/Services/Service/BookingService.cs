@@ -5,6 +5,8 @@ using CarPoolApplication.Models;
 using CodeFirst.Models;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using CodeFirst.Services.Interfaces;
+
 namespace CarPoolApplication.Services
 {
     public class BookingService : IBookingService
@@ -28,6 +30,7 @@ namespace CarPoolApplication.Services
         public void Add(Booking entity)
         {
             _context.Bookings.Add(entity);
+            _context.SaveChanges();
         }
 
         public Booking Create(Booking entity)
@@ -46,6 +49,25 @@ namespace CarPoolApplication.Services
             _context.SaveChanges();
         }
 
+        public Booking GetByID(int id)
+        {
+            return _context.Bookings.Find(id);
+        }
+
+        public IList<Booking> GetByRiderID(int id)
+        {
+            return _context.Bookings.ToList().FindAll(_ => _.RiderID==id);
+        }
+
+        public void Cancel(int id)
+        {
+            _context.Bookings.Find(id).Status = StatusOfRide.Cancelled;
+        }
+
+        public IList<Booking> GetByOfferID(int id)
+        {
+            return _context.Bookings.ToList().FindAll(_ => _.OfferID == id);
+        }
     }
 
 }

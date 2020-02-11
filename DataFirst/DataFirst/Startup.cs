@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CarPoolApplication.Models;
 using CarPoolApplication.Services;
-using CarPoolApplication.Services.Interfaces;
+using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace CodeFirst
 {
@@ -39,28 +33,55 @@ namespace CodeFirst
             services.AddScoped<IOfferService, OfferService>();
             services.AddScoped<IBookingService, BookingService>();
 
-
+            services.AddMvc();
             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
-
+            
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+
+
+            //app.Map("/map1", HandleMapTest1);
+
+            //app.Map("/map2", HandleMapTest2);
+
+            //app.Run(async context =>
+            //{
+            //    await context.Response.WriteAsync("Hello from non-Map delegate. <p>");
+            //});
+
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+
         }
+        //private static void HandleMapTest1(IApplicationBuilder app)
+        //{
+        //    app.Run(async context =>
+        //    {
+        //        await context.Response.WriteAsync("Map Test 1");
+        //    });
+        //}
+
+        //private static void HandleMapTest2(IApplicationBuilder app)
+        //{
+        //    app.Run(async context =>
+        //    {
+        //        await context.Response.WriteAsync("Map Test 2");
+        //    });
+        //}
     }
 }

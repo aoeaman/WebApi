@@ -9,11 +9,10 @@ namespace CarPoolApplication.Services
     {
         public int GenerateID()
         {
-            Random random = new Random();
-            return random.Next(10000,99999)+ DateTime.UtcNow.Year + DateTime.UtcNow.Millisecond;
+            return new Random().Next(10000,99999)+ DateTime.UtcNow.Year + DateTime.UtcNow.Millisecond;
         }
 
-        public List<string> Cities = new List<string>() { "Banglore", "Chandigarh", "Dehradun", "Gwalior", "Hyderabad", "Mumbai", "Vizag" };
+        
 
         public byte GetByteOnly()
         {
@@ -81,7 +80,7 @@ namespace CarPoolApplication.Services
             }
             catch (Exception)
             {
-                Console.WriteLine("****Enter only a Character***");
+                Console.WriteLine("Enter only a Character");
                 return GetCharOnly();
             }
         }
