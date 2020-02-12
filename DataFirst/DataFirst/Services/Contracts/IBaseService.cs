@@ -5,7 +5,7 @@ using CarPoolApplication.Models;
 
 namespace CodeFirst.Services.Interfaces
 {
-    public interface IService<T> 
+    public interface IBaseService<T> 
     { 
         void Add(T entity);
         T Create(T entity);

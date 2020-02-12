@@ -1,19 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CarPoolApplication.Models;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CarPoolApplication.Services
 {
     public class VehicleService:IVehicleService
     {
         UtilityService Service;
+        private readonly IServiceScope _scope;
         Context _context;
-        public VehicleService(Context context)
+        public VehicleService(IServiceProvider service)
         {
+            _scope = service.CreateScope();
             Service = new UtilityService();
-            _context = context;
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
 
         public void Add(Vehicle vehicle)

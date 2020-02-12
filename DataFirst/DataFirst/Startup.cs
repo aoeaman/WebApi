@@ -1,4 +1,3 @@
-using CarPoolApplication.Models;
 using CarPoolApplication.Services;
 using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
@@ -8,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
-
 namespace CodeFirst
 {
     public class Startup
@@ -25,13 +22,12 @@ namespace CodeFirst
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Context>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
-            services.AddScoped<DbContext, Context>();
-
-            services.AddScoped<IService<Rider>, RiderService>();
-            services.AddScoped<IService<Driver>, DriverService>();
-            services.AddScoped<IVehicleService, VehicleService>();
-            services.AddScoped<IOfferService, OfferService>();
-            services.AddScoped<IBookingService, BookingService>();
+            
+            services.AddSingleton<IRiderService, RiderService>();
+            services.AddSingleton<IDriverService,DriverService>( );
+            services.AddSingleton<IVehicleService, VehicleService>();
+            services.AddSingleton<IOfferService, OfferService>();
+            services.AddSingleton<IBookingService, BookingService>();
 
             services.AddMvc();
             services.AddControllers();

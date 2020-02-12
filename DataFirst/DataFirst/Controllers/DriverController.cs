@@ -9,8 +9,8 @@ namespace CodeFirst.Controllers
     [Route("Driver")]
     public class DriverController : ControllerBase
     {
-        private IService<Driver> _repos;
-        public DriverController(IService<Driver> repos)
+        private IDriverService _repos;
+        public DriverController(IDriverService repos)
         {
             _repos = repos;
         }
@@ -31,7 +31,7 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("GetByID/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public Driver GetByID(int id)
         {

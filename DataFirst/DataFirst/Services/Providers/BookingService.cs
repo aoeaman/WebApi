@@ -1,24 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System;
 using System.Linq;
 using CarPoolApplication.Models;
 using CodeFirst.Models;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using CodeFirst.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarPoolApplication.Services
 {
     public class BookingService : IBookingService
     {
-        UtilityService Service;
-
+        UtilityService Util;
+        private readonly IServiceScope _scope;
         Context _context;
 
-        public BookingService(Context context)
+        public BookingService(IServiceProvider service)
         {
-            Service = new UtilityService();
-            _context = context;
+            _scope = service.CreateScope();
+            Util = new UtilityService();
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
 
         public void UpdateStatus(int iD, StatusOfRide status)
@@ -35,7 +38,8 @@ namespace CarPoolApplication.Services
 
         public Booking Create(Booking entity)
         {
-            entity.ID = Service.GenerateID();
+            entity.ID = Util.GenerateID();
+            entity.Status = StatusOfRide.Pending;
             return entity;
         }
 

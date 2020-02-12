@@ -5,10 +5,8 @@ using CarPoolApplication.Models;
 
 namespace CodeFirst.Services.Interfaces
 {
-    public interface IOfferService : IService<Offer>
+    public interface IRiderService : IBaseService<Rider>
     {
-
-        Offer Update(Offer Offer);
-
+        int count();
     }
 }

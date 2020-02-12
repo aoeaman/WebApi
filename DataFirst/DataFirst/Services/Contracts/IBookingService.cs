@@ -5,12 +5,11 @@ using CarPoolApplication.Models;
 
 namespace CodeFirst.Services.Interfaces
 {
-    public interface IBookingService : IService<Booking>
+    public interface IBookingService : IBaseService<Booking>
     {
         IList<Booking> GetByRiderID(int id);
 
         void UpdateStatus(int iD, StatusOfRide status);       
-        void Cancel(int id);
         IList<Booking> GetByOfferID(int id);
     }
 }

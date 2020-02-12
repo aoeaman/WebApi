@@ -31,7 +31,7 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("GetByID/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public Vehicle GetByID(int id)
         {

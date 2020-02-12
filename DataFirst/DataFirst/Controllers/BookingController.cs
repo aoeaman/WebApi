@@ -16,7 +16,7 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public string Create(Booking booking)
+        public string Create([FromBody]Booking booking)
         {
             if (!ModelState.IsValid)
                 return "Bad";
@@ -24,7 +24,7 @@ namespace CodeFirst.Controllers
             return "Ok";
         }
 
-        [Route("GetByID/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public Booking GetByID(int id)
         {
@@ -49,14 +49,33 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public void Cancel(int id)
         {
-            _repos.Cancel(id);
+            _repos.UpdateStatus(id, StatusOfRide.Cancelled);
         }
-
+        [Route("Confirm/{id:int}")]
+        [HttpGet]
+        public void Confirm(int id)
+        {
+            _repos.UpdateStatus(id, StatusOfRide.Accepted);
+        }
+        [Route("Reject/{id:int}")]
+        [HttpGet]
+        public void Reject(int id)
+        {
+            _repos.UpdateStatus(id, StatusOfRide.Rejected);
+        }
+        [Route("Complete/{id:int}")]
+        [HttpGet]
+        public void Complete(int id)
+        {
+            _repos.UpdateStatus(id, StatusOfRide.Completed);
+        }
         [Route("Offer/{id:int}")]
         [HttpGet]
         public IList<Booking> OfferID(int id)
         {
            return _repos.GetByOfferID(id);
         }
+
+        
     }
 }

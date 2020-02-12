@@ -10,6 +10,7 @@ namespace CarPoolApplication.Models
         [Column(TypeName = "nvarchar(10)")]
         public StatusOfRide Status { get; set; }
         [Column(TypeName = "nvarchar(15)")]
+        [Required]
         public Cities Source { get; set; }
         [Column(TypeName = "nvarchar(15)")]
         public Cities Destination { get; set; }
@@ -17,7 +18,9 @@ namespace CarPoolApplication.Models
         public int RiderID { get; set; }
         public virtual Rider Rider { get; set; }
         public virtual Offer Offer { get; set; }
+        [Required]
         public float Fare { get; set; }
+        [Required]
         public byte Seats { get; set; }
     }
 }

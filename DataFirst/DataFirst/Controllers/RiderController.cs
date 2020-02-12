@@ -12,8 +12,9 @@ namespace CodeFirst.Controllers
     [Route("Rider")]
     public class RiderController : ControllerBase
     {
-        private IService<Rider> _repos;
-        public RiderController(IService<Rider> repos)
+        private IRiderService _repos;
+        
+        public RiderController(IRiderService repos)
         {
             _repos = repos;
         }
@@ -34,11 +35,18 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("GetByID/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public Rider GetByID(int id)
         {
             return _repos.GetByID(id);
+        }
+
+        [Route("cnt")]
+        [HttpGet]
+        public int GetByID()
+        {
+            return _repos.count();
         }
     }
 }

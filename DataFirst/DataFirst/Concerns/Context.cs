@@ -8,8 +8,6 @@ namespace CodeFirst.Models
 {
     public partial class Context : DbContext
     {
-
-
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Rider> Riders { get; set; }
@@ -47,5 +45,6 @@ namespace CodeFirst.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
     }
 }

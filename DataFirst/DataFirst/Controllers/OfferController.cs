@@ -8,7 +8,7 @@ namespace CodeFirst.Controllers
     [Route("Offer")]
     public class OfferController:ControllerBase
     {
-        private IOfferService _repos;
+        private readonly IOfferService _repos;
         public OfferController(IOfferService repos)
         {
             _repos = repos;
@@ -30,7 +30,7 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("GetByID/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public Offer GetByID(int id)
         {
@@ -42,8 +42,22 @@ namespace CodeFirst.Controllers
         {
             if (!ModelState.IsValid)
                 return "Bad";
-            _repos.Delete(id);
+            _repos.Cancel(id);
             return "Ok";
+        }
+
+        [Route("Requests/{id:int}")]
+        [HttpGet]
+        public List<Offer> GetAll(int id)
+        {
+            return _repos.Requests(id);
+        }
+
+        [Route("Search")]
+        [HttpGet]
+        public List<Offer> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
+        {
+            return _repos.FilterOffer(source,destination,seats);
         }
     }
 }
