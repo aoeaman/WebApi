@@ -42,15 +42,22 @@ namespace CodeFirst.Controllers
         {
             if (!ModelState.IsValid)
                 return "Bad";
-            _repos.Cancel(id);
+            _repos.UpdateStatus(id,StatusOfRide.Cancelled);
             return "Ok";
         }
 
-        [Route("Requests/{id:int}")]
+        [Route("Cancel/{id:int}")]
         [HttpGet]
-        public List<Offer> GetAll(int id)
+        public string Complete(int id)
         {
-            return _repos.Requests(id);
+            if(_repos.UpdateStatus(id, StatusOfRide.Completed))
+            {
+                return "OK";
+            }
+            else
+            {
+                return "BAD";
+            }
         }
 
         [Route("Search")]

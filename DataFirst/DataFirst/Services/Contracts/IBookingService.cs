@@ -11,5 +11,6 @@ namespace CodeFirst.Services.Interfaces
 
         void UpdateStatus(int iD, StatusOfRide status);       
         IList<Booking> GetByOfferID(int id);
+        List<Booking> Requests(int id);
     }
 }

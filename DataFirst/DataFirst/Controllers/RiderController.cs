@@ -42,11 +42,5 @@ namespace CodeFirst.Controllers
             return _repos.GetByID(id);
         }
 
-        [Route("cnt")]
-        [HttpGet]
-        public int GetByID()
-        {
-            return _repos.count();
-        }
     }
 }

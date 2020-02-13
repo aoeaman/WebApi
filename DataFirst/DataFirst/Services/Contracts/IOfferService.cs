@@ -7,9 +7,8 @@ namespace CodeFirst.Services.Interfaces
 {
     public interface IOfferService : IBaseService<Offer>
     {
-        Offer Update(Offer Offer);
-        void Cancel(int id);
-        List<Offer> Requests(int id);
+        Offer Update(Offer offer);
+        bool UpdateStatus(int id, StatusOfRide status);
         List<Offer> FilterOffer(Cities source, Cities destination,int seats);
     }
 }

@@ -15,29 +15,27 @@ namespace CarPoolApplication.Services
     {
         UtilityService Util;
         private readonly IServiceScope _scope;
-        Context _context;
-
         public BookingService(IServiceProvider service)
         {
             _scope = service.CreateScope();
             Util = new UtilityService();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
 
         public void UpdateStatus(int iD, StatusOfRide status)
         {
-            _context.Bookings.Find(iD).Status = status;
-            _context.SaveChanges();
+            GetByID(iD).Status = status;
+            _scope.ServiceProvider.GetRequiredService<Context>().SaveChanges();
         }
 
         public void Add(Booking entity)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Bookings.Add(entity);
             _context.SaveChanges();
         }
 
         public Booking Create(Booking entity)
-        {
+        {           
             entity.ID = Util.GenerateID();
             entity.Status = StatusOfRide.Pending;
             return entity;
@@ -45,32 +43,33 @@ namespace CarPoolApplication.Services
 
         public List<Booking> GetAll()
         {
-            return _context.Bookings.ToList();
+            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList();
+        }
+
+        public List<Booking> Requests(int id)
+        {          
+            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.OfferID == id && _.Status == StatusOfRide.Pending);
         }
         public void Delete(int iD)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Bookings.Remove(_context.Bookings.FirstOrDefault(_ => _.ID == iD));
             _context.SaveChanges();
         }
 
         public Booking GetByID(int id)
-        {
-            return _context.Bookings.Find(id);
+        {            
+            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.Find(id);
         }
 
         public IList<Booking> GetByRiderID(int id)
         {
-            return _context.Bookings.ToList().FindAll(_ => _.RiderID==id);
-        }
-
-        public void Cancel(int id)
-        {
-            _context.Bookings.Find(id).Status = StatusOfRide.Cancelled;
+            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.RiderID==id);
         }
 
         public IList<Booking> GetByOfferID(int id)
-        {
-            return _context.Bookings.ToList().FindAll(_ => _.OfferID == id);
+        {           
+            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.OfferID == id);
         }
     }
 

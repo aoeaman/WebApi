@@ -12,16 +12,11 @@ namespace CarPoolApplication.Services
     {
         readonly UtilityService Util;
         private readonly IServiceScope _scope;
-        public static int Count { get; set; }
         
-
-        Context _context;
         public RiderService(IServiceProvider service)
         {
-            Count++;
             _scope = service.CreateScope();
-            Util = new UtilityService();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            Util = new UtilityService();           
         }
 
         public Rider Create(Rider rider)
@@ -32,27 +27,24 @@ namespace CarPoolApplication.Services
 
         public void Add(Rider rider)
         {
-            
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Riders.Add(rider);
             _context.SaveChanges();
 
         }
         public List<Rider> GetAll()
         {
-            return _context.Riders.ToList();
+            return _scope.ServiceProvider.GetRequiredService<Context>().Riders.ToList();
         }
         public Rider GetByID(int id)
         {
-            return _context.Riders.Find(id);
+            return _scope.ServiceProvider.GetRequiredService<Context>().Riders.Find(id);
         }
         public void Delete(int iD)
         {
-             _context.Riders.Remove(_context.Riders.Find(iD));
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            _context.Riders.Remove(_context.Riders.Find(iD));
         }
 
-        public int count()
-        {
-            return Count;
-        }
     }
 }

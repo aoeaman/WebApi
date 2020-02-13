@@ -7,6 +7,5 @@ namespace CodeFirst.Services.Interfaces
 {
     public interface IRiderService : IBaseService<Rider>
     {
-        int count();
     }
 }

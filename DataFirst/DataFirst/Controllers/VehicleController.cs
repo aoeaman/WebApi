@@ -37,5 +37,12 @@ namespace CodeFirst.Controllers
         {
             return _repos.GetByID(id);
         }
+
+        [Route("Disable/{id:int}")]
+        [HttpGet]
+        public string Disable(int id)
+        {
+            return _repos.Disable(id);
+        }
     }
 }

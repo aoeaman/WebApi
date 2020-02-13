@@ -7,6 +7,6 @@ namespace CodeFirst.Services.Interfaces
 {
     public interface IVehicleService : IBaseService<Vehicle>
     {
-
+        string Disable(int id);
     }
 }

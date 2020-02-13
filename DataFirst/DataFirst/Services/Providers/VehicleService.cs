@@ -12,16 +12,15 @@ namespace CarPoolApplication.Services
     {
         UtilityService Service;
         private readonly IServiceScope _scope;
-        Context _context;
         public VehicleService(IServiceProvider service)
         {
             _scope = service.CreateScope();
             Service = new UtilityService();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
 
         public void Add(Vehicle vehicle)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Vehicles.Add(vehicle);
             _context.SaveChanges();
         }
@@ -33,16 +32,38 @@ namespace CarPoolApplication.Services
 
         public void Delete(int iD)
         {
-            throw new System.NotImplementedException();
+            _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.Remove(GetByID(iD));
         }
 
         public List<Vehicle> GetAll()
         {
-            return _context.Vehicles.ToList();
+            return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.ToList();
         }
         public Vehicle GetByID(int iD)
         {
-            return _context.Vehicles.Find(iD);
+            return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.Find(iD);
+        }
+
+        public string Disable(int id)
+        {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            var vehicle = _context.Vehicles.Find(id);
+            if (vehicle.IsActive)
+            {
+                if(_context.Offers.Any(_=> _.VehicleID == id))
+                {
+                    return $"Cannot Diable ue to Active Offer";
+                }
+                else
+                {
+                    vehicle.IsActive = false;
+                    return $"Disabled";
+                }
+            }
+            else
+            {
+                return $"Already Disabled";
+            }
         }
     }
 }

@@ -46,28 +46,34 @@ namespace CodeFirst.Controllers
         }
 
         [Route("Cancel/{id:int}")]
-        [HttpGet]
+        [HttpPost]
         public void Cancel(int id)
         {
             _repos.UpdateStatus(id, StatusOfRide.Cancelled);
         }
         [Route("Confirm/{id:int}")]
-        [HttpGet]
+        [HttpPost]
         public void Confirm(int id)
         {
             _repos.UpdateStatus(id, StatusOfRide.Accepted);
         }
         [Route("Reject/{id:int}")]
-        [HttpGet]
+        [HttpPost]
         public void Reject(int id)
         {
             _repos.UpdateStatus(id, StatusOfRide.Rejected);
         }
         [Route("Complete/{id:int}")]
-        [HttpGet]
+        [HttpPost]
         public void Complete(int id)
         {
             _repos.UpdateStatus(id, StatusOfRide.Completed);
+        }
+        [Route("Requests/{id:int}")]
+        [HttpGet]
+        public List<Booking> GetAll(int id)
+        {
+            return _repos.Requests(id);
         }
         [Route("Offer/{id:int}")]
         [HttpGet]

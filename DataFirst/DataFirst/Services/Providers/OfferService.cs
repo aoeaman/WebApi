@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using CarPoolApplication.Models;
-using Newtonsoft.Json;
 using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using System.Linq;
@@ -14,16 +12,15 @@ namespace CarPoolApplication.Services
 
     {
         readonly UtilityService Util;
-        readonly Context _context;
         private readonly IServiceScope _scope;
         public OfferService(IServiceProvider service)
         {
             _scope = service.CreateScope();
-            Util = new UtilityService();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            Util = new UtilityService();            
         }
         public void Add(Offer offer)
-        {           
+        {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Offers.Add(offer);
             _context.SaveChanges();
         }       
@@ -40,15 +37,49 @@ namespace CarPoolApplication.Services
         }
         public List<Offer> GetAll()
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             return _context.Offers.ToList() ;
         }
-        public void Cancel(int iD)
+        public bool UpdateStatus(int iD, StatusOfRide status)
         {
-            _context.Offers.Find(iD).Status = StatusOfRide.Cancelled;
-            _context.SaveChanges();
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            var offer = _context.Offers.Find(iD);
+            switch (status)
+            {
+                case StatusOfRide.Cancelled:                    
+                    if (offer.Status == StatusOfRide.Created && offer.Source == offer.CurrentLocaton) { offer.Status = status; return true; }
+                    else
+                    {
+                        return false;
+                    }
+
+                case StatusOfRide.Completed:
+                    if (offer.Status == StatusOfRide.Created)
+                    {
+                        offer.Status = status;
+                        _context.Bookings.ToList().ForEach(_ =>
+                        {
+                            if (_.OfferID == iD)
+                            {
+                                if (_.Status == StatusOfRide.Accepted)
+                                {
+                                    _.Status = StatusOfRide.Completed;
+                                }
+                                else
+                                {
+                                    _.Status = StatusOfRide.Rejected;
+                                }
+                            }
+                        });
+                        return true;
+                    }
+                    else return false;
+            }
+            return false;
         }
         public Offer GetByID(int iD)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             return _context.Offers.Find(iD);
         }
         public Offer Update(Offer Offer)
@@ -57,21 +88,17 @@ namespace CarPoolApplication.Services
         }
         public void Delete(int iD)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Offers.Remove(_context.Offers.Find(iD));
         }
-
         public List<Offer> GetByDriver(int id)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             return GetAll().FindAll(_ => _.ID == id);
         }
-
-        public List<Offer> Requests(int id)
-        {
-            return GetByDriver(id).FindAll(_ => _.Status == StatusOfRide.Pending);
-        }
-
         public List<Offer> FilterOffer(Cities source, Cities destination,int seats)
         {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();      
             List<Offer> Offers = new List<Offer>();
             foreach (Offer offer in GetAll().FindAll(_ => _.Status == StatusOfRide.Created))
             {
@@ -134,7 +161,6 @@ namespace CarPoolApplication.Services
                 }
             }
             return Offers;
-
         }
     }
 }
