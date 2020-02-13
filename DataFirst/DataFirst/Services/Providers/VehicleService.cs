@@ -11,27 +11,20 @@ namespace CarPoolApplication.Services
 {
     public class VehicleService:IVehicleService
     {
-        UtilityService Service;
         private readonly IServiceScope _scope;
         public VehicleService(IServiceProvider service)
         {
             _scope = service.CreateScope();
-            Service = new UtilityService();
         }
 
-        public void Add(Vehicle vehicle)
+        public HttpResponseException Add(Vehicle vehicle)
         {
             var _context = _scope.ServiceProvider.GetRequiredService<Context>();
             _context.Vehicles.Add(vehicle);
             _context.SaveChanges();
         }
-        public Vehicle Create(Vehicle vehicle)
-        {
-            vehicle.ID = Service.GenerateID();
-            return vehicle;
-        }
 
-        public void Delete(int iD)
+        public HttpResponseException Delete(int iD)
         {
             _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.Remove(GetByID(iD));
         }
@@ -67,14 +60,5 @@ namespace CarPoolApplication.Services
             }
         }
 
-        HttpResponseException IBaseService<Vehicle>.Add(Vehicle entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        HttpResponseException IBaseService<Vehicle>.Delete(int iD)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
