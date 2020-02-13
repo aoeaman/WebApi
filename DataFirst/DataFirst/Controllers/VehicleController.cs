@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("Vehicle")]
-    public class VehicleController:ControllerBase
+    public class VehicleController:Controller
     {
         private IVehicleService _repos;
         public VehicleController(IVehicleService repos)
@@ -20,7 +20,7 @@ namespace CodeFirst.Controllers
         {
             if (!ModelState.IsValid)
                 return "Bad";
-            _repos.Add(_repos.Create(vehicle));
+            _repos.Add(vehicle);
             return "Ok";
         }
 

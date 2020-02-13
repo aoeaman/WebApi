@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 namespace CodeFirst.Controllers
 {
-    [Route ("Booking")]
-    public class BookingController:ControllerBase
+    [Route ("api/[Controller]")]
+    public class BookingController:Controller
     {
         private IBookingService _repos;
         public BookingController(IBookingService repos)
@@ -20,11 +20,11 @@ namespace CodeFirst.Controllers
         {
             if (!ModelState.IsValid)
                 return "Bad";
-            _repos.Add(_repos.Create(booking));
+            _repos.Add(booking);
             return "Ok";
         }
 
-        [Route("{id:int}")]
+        [Route("{id}")]
         [HttpGet]
         public Booking GetByID(int id)
         {

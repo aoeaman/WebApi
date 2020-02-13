@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarPoolApplication.Models
 {
@@ -13,5 +14,7 @@ namespace CarPoolApplication.Models
         public bool IsActive { get; set; }
         public VehicleType Type { get; set; }      
         public virtual Driver Driver { get; set; }
+
+        public virtual IList<Offer> Offers { get; set; }
     }
 }

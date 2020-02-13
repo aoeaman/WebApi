@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("Offer")]
-    public class OfferController:ControllerBase
+    public class OfferController:Controller
     {
         private readonly IOfferService _repos;
         public OfferController(IOfferService repos)
@@ -16,12 +16,10 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public string Create([FromBody]Offer offer)
+        public System.Web.Http.HttpResponseException Create([FromBody]Offer offer)
         {
-            if (!ModelState.IsValid)
-                return "Bad";
-            _repos.Add(_repos.Create(offer));
-            return "Ok";
+
+            return _repos.Add(offer);
         }
         [Route( "GetAll")]
         [HttpGet]
@@ -48,16 +46,10 @@ namespace CodeFirst.Controllers
 
         [Route("Cancel/{id:int}")]
         [HttpGet]
-        public string Complete(int id)
+        public System.Web.Http.HttpResponseException Complete(int id)
         {
-            if(_repos.UpdateStatus(id, StatusOfRide.Completed))
-            {
-                return "OK";
-            }
-            else
-            {
-                return "BAD";
-            }
+           return _repos.UpdateStatus(id, StatusOfRide.Completed);
+           
         }
 
         [Route("Search")]

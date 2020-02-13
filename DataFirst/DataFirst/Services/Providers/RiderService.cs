@@ -5,6 +5,7 @@ using System.Linq;
 using CodeFirst.Services.Interfaces;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using System.Web.Http;
 
 namespace CarPoolApplication.Services
 {
@@ -46,5 +47,14 @@ namespace CarPoolApplication.Services
             _context.Riders.Remove(_context.Riders.Find(iD));
         }
 
+        HttpResponseException IBaseService<Rider>.Add(Rider entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        HttpResponseException IBaseService<Rider>.Delete(int iD)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

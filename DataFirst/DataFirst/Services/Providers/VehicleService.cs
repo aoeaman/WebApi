@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Http;
 using CarPoolApplication.Models;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
@@ -39,7 +40,7 @@ namespace CarPoolApplication.Services
         {
             return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.ToList();
         }
-        public Vehicle GetByID(int iD)
+        public Vehicle GetByID(int iD) 
         {
             return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.Find(iD);
         }
@@ -52,7 +53,7 @@ namespace CarPoolApplication.Services
             {
                 if(_context.Offers.Any(_=> _.VehicleID == id))
                 {
-                    return $"Cannot Diable ue to Active Offer";
+                    return $"Cannot Diable due to Active Offer";
                 }
                 else
                 {
@@ -64,6 +65,16 @@ namespace CarPoolApplication.Services
             {
                 return $"Already Disabled";
             }
+        }
+
+        HttpResponseException IBaseService<Vehicle>.Add(Vehicle entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        HttpResponseException IBaseService<Vehicle>.Delete(int iD)
+        {
+            throw new NotImplementedException();
         }
     }
 }

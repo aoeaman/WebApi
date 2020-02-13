@@ -1,13 +1,12 @@
 ﻿using CarPoolApplication.Models;
-using CarPoolApplication.Services;
 using CodeFirst.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Web.Http;
 
 namespace CodeFirst.Controllers
 {
     [Route("Driver")]
-    public class DriverController : ControllerBase
+    public class DriverController : Microsoft.AspNetCore.Mvc.Controller
     {
         private IDriverService _repos;
         public DriverController(IDriverService repos)
@@ -17,12 +16,9 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public string PostDriver([FromBody] Driver driver)
+        public HttpResponseException PostDriver([FromBody] Driver driver)
         {
-            if (!ModelState.IsValid)
-                return "Bad";
-            _repos.Add(_repos.Create(driver));
-            return "Ok";
+            return _repos.Add(driver);
         }
         [Route("GetAll")]
         [HttpGet]

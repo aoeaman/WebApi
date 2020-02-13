@@ -22,7 +22,7 @@ namespace CodeFirst
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Context>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
-            
+
             services.AddSingleton<IRiderService, RiderService>();
             services.AddSingleton<IDriverService,DriverService>( );
             services.AddSingleton<IVehicleService, VehicleService>();

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CodeFirst.Controllers
 { 
     [Route("Rider")]
-    public class RiderController : ControllerBase
+    public class RiderController : Controller
     {
         private IRiderService _repos;
         
@@ -24,7 +24,7 @@ namespace CodeFirst.Controllers
         {
             if (!ModelState.IsValid)
                 return "Bad";
-            _repos.Add(_repos.Create(rider));
+            _repos.Add(rider);
             return "Ok";
         }
 

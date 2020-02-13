@@ -5,53 +5,72 @@ using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using System.Web.Http;
 
 namespace CarPoolApplication.Services
 {
-    public class DriverService : IDriverService,IDisposable
+    public class DriverService : IDriverService
     {
-        UtilityService Util;
         readonly IServiceScope _scope;
         public DriverService(IServiceProvider service)
-        {
-            Util = new UtilityService();           
+        {          
             _scope = service.CreateScope();
         }
-        public void Add(Driver driver)
+        public HttpResponseException Add(Driver driver)
         {
-            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            _context.Drivers.Add(driver);
-            _context.SaveChanges();
+            try
+            {
+                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+                _context.Drivers.Add(driver);
+                _context.SaveChanges();
+                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+            }
+            catch (Exception)
+            {
+                return new HttpResponseException(System.Net.HttpStatusCode.BadRequest );
+            }
+            
 
         }
 
-        public Driver Create(Driver driver)
+        public HttpResponseException Delete(int iD)
         {
-            driver.ID = Util.GenerateID();
-            return driver;
+            try
+            {
+                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+                _context.Drivers.Remove(_context.Drivers.Find(iD));
+                return new HttpResponseException(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+            }
+            
         }
-
-        public void Delete(int iD)
-        {
-            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            _context.Drivers.Remove(_context.Drivers.Find(iD));
-        }
-
-        public void Dispose()
-        {
-           _scope?.Dispose();
-        }
-
         public List<Driver> GetAll()
         {
-             var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            return _context.Drivers.ToList();
+            try
+            {
+                return _scope.ServiceProvider.GetRequiredService<Context>().Drivers.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
         public Driver GetByID(int id)
         {
-            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            return _context.Drivers.Find(id);
+            try
+            {
+                return _scope.ServiceProvider.GetRequiredService<Context>().Drivers.Find(id);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
     }
 }
