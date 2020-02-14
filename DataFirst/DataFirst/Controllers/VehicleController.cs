@@ -1,11 +1,14 @@
-﻿using CarPoolApplication.Models;
+﻿using CarPoolApplication;
+using CarPoolApplication.Models;
 using CodeFirst.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace CodeFirst.Controllers
 {
-    [Route("Vehicle")]
+    [Route("api/[Controller]")]
+    [Authorize]
     public class VehicleController:Controller
     {
         private IVehicleService _repos;
@@ -18,10 +21,7 @@ namespace CodeFirst.Controllers
         [HttpPost]
         public string Create([FromBody] Vehicle vehicle)
         {
-            if (!ModelState.IsValid)
-                return "Bad";
-            _repos.Add(vehicle);
-            return "Ok";
+            return _repos.Add(vehicle).Response.ReasonPhrase;
         }
 
         [Route("GetAll")]
@@ -39,10 +39,16 @@ namespace CodeFirst.Controllers
         }
 
         [Route("Disable/{id:int}")]
-        [HttpGet]
+        [HttpPut]
         public string Disable(int id)
         {
-            return _repos.Disable(id);
+            return _repos.Disable(id).Response.ReasonPhrase;
+        }
+        [Route("Delete/{id:int}")]
+        [HttpDelete]
+        public string Delete(int id)
+        {
+            return _repos.Delete(id).Response.ReasonPhrase;
         }
     }
 }

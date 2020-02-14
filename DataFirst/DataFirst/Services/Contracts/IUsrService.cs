@@ -5,7 +5,8 @@ using CarPoolApplication.Models;
 
 namespace CodeFirst.Services.Interfaces
 {
-    public interface IRiderService : IBaseService<Rider>
+    public interface IUserService : IBaseService<User>
     {
+
     }
 }

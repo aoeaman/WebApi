@@ -1,13 +1,16 @@
-﻿using CarPoolApplication.Models;
+﻿using CarPoolApplication;
+using CarPoolApplication.Models;
 using CodeFirst.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace CodeFirst.Controllers
 {
-    [Route("Offer")]
+    [Route("api/[Controller]")]
+    [Authorize]
     public class OfferController:Controller
-    {
+    {        
         private readonly IOfferService _repos;
         public OfferController(IOfferService repos)
         {
@@ -16,10 +19,9 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public System.Web.Http.HttpResponseException Create([FromBody]Offer offer)
+        public string Create([FromBody]Offer offer)
         {
-
-            return _repos.Add(offer);
+            return _repos.Add(offer).Response.ReasonPhrase;
         }
         [Route( "GetAll")]
         [HttpGet]
@@ -37,18 +39,15 @@ namespace CodeFirst.Controllers
         [Route("Cancel/{id:int}")]
         [HttpGet]
         public string Cancel(int id)
-        {
-            if (!ModelState.IsValid)
-                return "Bad";
-            _repos.UpdateStatus(id,StatusOfRide.Cancelled);
-            return "Ok";
+        {       
+                return _repos.UpdateStatus(id,StatusOfRide.Cancelled).Response.ReasonPhrase;            
         }
 
         [Route("Cancel/{id:int}")]
         [HttpGet]
-        public System.Web.Http.HttpResponseException Complete(int id)
+        public string Complete(int id)
         {
-           return _repos.UpdateStatus(id, StatusOfRide.Completed);
+           return _repos.UpdateStatus(id, StatusOfRide.Completed).Response.ReasonPhrase;
            
         }
 

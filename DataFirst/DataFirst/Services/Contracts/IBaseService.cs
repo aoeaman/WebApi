@@ -9,7 +9,7 @@ namespace CodeFirst.Services.Interfaces
     public interface IBaseService<T> 
     { 
         HttpResponseException Add(T entity);
-        HttpResponseException Delete(int iD);
+        HttpResponseException Delete(int id);
         List<T> GetAll();
         T GetByID(int id);
     }

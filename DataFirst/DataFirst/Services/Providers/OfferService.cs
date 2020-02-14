@@ -19,18 +19,28 @@ namespace CarPoolApplication.Services
         }
         public HttpResponseException Add(Offer offer)
         {
+            Context _context;
             try
             {
-                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+                _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            }
+            catch (Exception)
+            {
+                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
+            }
+            try
+            {                
                 offer.CurrentLocaton = offer.Source;
                 offer.Status = StatusOfRide.Created;
+                offer.IsActive = true;
                 _context.Offers.Add(offer);
                 _context.SaveChanges();
                 return new HttpResponseException(System.Net.HttpStatusCode.Created);
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
+                _context.Offers.Remove(offer);
+                return new HttpResponseException(System.Net.HttpStatusCode.Conflict);
             }            
         }
         public List<Offer> GetAll()
@@ -45,12 +55,20 @@ namespace CarPoolApplication.Services
             }
 
         }
-        public HttpResponseException UpdateStatus(int iD, StatusOfRide status)
+        public HttpResponseException UpdateStatus(int id, StatusOfRide status)
         {
+            Context _context;
             try
             {
-                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-                var offer = _context.Offers.Find(iD);
+                _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            }
+            catch (Exception)
+            {
+                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
+            }
+            try
+            {
+                var offer = _context.Offers.Find(id);
                 switch (status)
                 {
                     case StatusOfRide.Cancelled:
@@ -61,7 +79,7 @@ namespace CarPoolApplication.Services
                         }
                         else
                         {
-                            return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                            return new HttpResponseException(System.Net.HttpStatusCode.NotModified);
                         }
 
                     case StatusOfRide.Completed:
@@ -70,7 +88,7 @@ namespace CarPoolApplication.Services
                             offer.Status = status;
                             _context.Bookings.ToList().ForEach(_ =>
                             {
-                                if (_.OfferID == iD)
+                                if (_.OfferID == id)
                                 {
                                     if (_.Status == StatusOfRide.Accepted)
                                     {
@@ -86,21 +104,21 @@ namespace CarPoolApplication.Services
                         }
                         else
                         {
-                            return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                            return new HttpResponseException(System.Net.HttpStatusCode.NotModified);
                         }
                 }
                 return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return new HttpResponseException(System.Net.HttpStatusCode.MethodNotAllowed);
             }
         }
-        public Offer GetByID(int iD)
+        public Offer GetByID(int id)
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Offers.Find(iD);
+                return _scope.ServiceProvider.GetRequiredService<Context>().Offers.Find(id);
             }
             catch (Exception)
             {
@@ -111,12 +129,20 @@ namespace CarPoolApplication.Services
         {
             throw new NotImplementedException();
         }
-        public HttpResponseException Delete(int iD)
+        public HttpResponseException Delete(int id)
         {
+            Context _context;
             try
             {
-                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-                _context.Offers.Remove(_context.Offers.Find(iD));
+                _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            }
+            catch (Exception)
+            {
+                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
+            }
+            try
+            {              
+                _context.Offers.Find(id).IsActive=false;
                 return new HttpResponseException(System.Net.HttpStatusCode.OK);
             }
             catch (Exception)
@@ -128,7 +154,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return GetAll().FindAll(_ => _.ID == id);
+                return GetAll().FindAll(_ => _.UserID == id);
             }
             catch (Exception)
             {
@@ -144,62 +170,13 @@ namespace CarPoolApplication.Services
                 List<Offer> Offers = new List<Offer>();
                 foreach (Offer offer in GetAll().FindAll(_ => _.Status == StatusOfRide.Created))
                 {
-                    int MaxSeats = offer.SeatsAvailable;
-                    List<Cities> OfferSequence = _context.ViaPoints.Where(P => P.OfferID == offer.ID).Select(p => p.City).ToList();
-
-                    OfferSequence.Insert(0, offer.Source);
-                    OfferSequence.Insert(OfferSequence.Count, offer.Destination);
-                    if (OfferSequence.IndexOf(offer.CurrentLocaton) > OfferSequence.IndexOf(offer.Source))
+                    if (ValidateOfferRoute(offer, source, destination, seats))
                     {
-                        OfferSequence.RemoveRange(OfferSequence.IndexOf(offer.Source), OfferSequence.IndexOf(offer.CurrentLocaton));
+                        Offers.Add(offer);
                     }
-
-                    if (OfferSequence.IndexOf(source) != -1 && OfferSequence.IndexOf(source) < OfferSequence.IndexOf(destination))
+                    else
                     {
-                        List<Booking> AssociatedBookings = _context.Bookings.ToList().FindAll(_ => _.OfferID == offer.ID && _.Status == StatusOfRide.Accepted);
-                        bool Flag = false;
-                        foreach (Cities Node in OfferSequence)
-                        {
-                            if (Node == destination)
-                            {
-                                if (MaxSeats >= seats)
-                                {
-                                    Offers.Add(offer);
-                                    break;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            foreach (Booking Element in AssociatedBookings)
-                            {
-                                if (Node == Element.Source)
-                                {
-                                    MaxSeats -= Element.Seats;
-                                }
-                                else if (Node == Element.Destination)
-                                {
-                                    MaxSeats += Element.Seats;
-                                }
-
-                            }
-                            if (Node == source)
-                            {
-                                if (seats > MaxSeats)
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    Flag = true;
-                                }
-                            }
-                            if (Flag && seats > MaxSeats)
-                            {
-                                break;
-                            }
-                        }
+                        continue;
                     }
                 }
                 return Offers;
@@ -209,6 +186,69 @@ namespace CarPoolApplication.Services
             {
                 return null;
             }
+        }
+        bool ValidateOfferRoute(Offer offer,Cities source,Cities destination,int seats)
+        {
+            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            
+            int MaxSeats = offer.SeatsAvailable;
+            List<Cities> Route = _context.ViaPoints.Where(P => P.OfferID == offer.ID).Select(p => p.City).ToList();
+
+            Route.Insert(0, offer.Source);
+            Route.Insert(Route.Count, offer.Destination);
+
+            if (Route.IndexOf(offer.CurrentLocaton) > Route.IndexOf(offer.Source))
+            {
+                Route.RemoveRange(Route.IndexOf(offer.Source), Route.IndexOf(offer.CurrentLocaton));
+            }
+
+            if (Route.IndexOf(source) != -1 && Route.IndexOf(source) < Route.IndexOf(destination))
+            {
+                List<Booking> AssociatedBookings = _context.Bookings.ToList().FindAll(_ => _.OfferID == offer.ID && _.Status == StatusOfRide.Accepted);
+                bool Flag = false;
+                foreach (Cities Node in Route)
+                {
+                    if (Node == destination)
+                    {
+                        if (MaxSeats >= seats)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    foreach (Booking Element in AssociatedBookings)
+                    {
+                        if (Node == Element.Source)
+                        {
+                            MaxSeats -= Element.Seats;
+                        }
+                        else if (Node == Element.Destination)
+                        {
+                            MaxSeats += Element.Seats;
+                        }
+
+                    }
+                    if (Node == source)
+                    {
+                        if (seats > MaxSeats)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Flag = true;
+                        }
+                    }
+                    if (Flag && seats > MaxSeats)
+                    {
+                        break;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

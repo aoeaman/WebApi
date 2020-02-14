@@ -1,9 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarPoolApplication.Models
 {
     public class User
     {
+        public User()
+        {
+            Bookings = new HashSet<Booking>();
+
+            Offers = new HashSet<Offer>();
+
+            Vehicles = new HashSet<Vehicle>();
+        }
+
+       
         [Key]
         public int ID { get; set; }       
         public string Name { get; set; }
@@ -15,5 +27,10 @@ namespace CarPoolApplication.Models
         public byte Age { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
+        public string DrivingLiscenceNumber { get; set; }
+        public bool IsActive { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual ICollection<Offer> Offers { get; set; }
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
 }

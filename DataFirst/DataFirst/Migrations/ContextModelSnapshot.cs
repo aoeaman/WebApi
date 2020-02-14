@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CodeFirst.Migrations
+namespace CarPoolApplication.Migrations
 {
     [DbContext(typeof(Context))]
     partial class ContextModelSnapshot : ModelSnapshot
@@ -33,10 +33,10 @@ namespace CodeFirst.Migrations
                     b.Property<float>("Fare")
                         .HasColumnType("real");
 
-                    b.Property<int>("OfferID")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("RiderID")
+                    b.Property<int>("OfferID")
                         .HasColumnType("int");
 
                     b.Property<byte>("Seats")
@@ -50,51 +50,16 @@ namespace CodeFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
                     b.HasIndex("OfferID");
 
-                    b.HasIndex("RiderID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Bookings");
-                });
-
-            modelBuilder.Entity("CarPoolApplication.Models.Driver", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte>("Age")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("DrivingLiscenceNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Drivers");
                 });
 
             modelBuilder.Entity("CarPoolApplication.Models.Offer", b =>
@@ -104,21 +69,22 @@ namespace CodeFirst.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CurrentLocaton")
-                        .HasColumnType("int");
+                    b.Property<string>("CurrentLocaton")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("Destination")
                         .IsRequired()
                         .HasColumnType("nvarchar(15)");
-
-                    b.Property<int>("DriverID")
-                        .HasColumnType("int");
 
                     b.Property<float>("Earnings")
                         .HasColumnType("real");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<byte>("SeatsAvailable")
                         .HasColumnType("tinyint");
@@ -134,17 +100,22 @@ namespace CodeFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
                     b.Property<int>("VehicleID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("DriverID");
+                    b.HasIndex("UserID");
+
+                    b.HasIndex("VehicleID");
 
                     b.ToTable("Offers");
                 });
 
-            modelBuilder.Entity("CarPoolApplication.Models.Rider", b =>
+            modelBuilder.Entity("CarPoolApplication.Models.User", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -154,9 +125,15 @@ namespace CodeFirst.Migrations
                     b.Property<byte>("Age")
                         .HasColumnType("tinyint");
 
+                    b.Property<string>("DrivingLiscenceNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -175,7 +152,7 @@ namespace CodeFirst.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Riders");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CarPoolApplication.Models.Vehicle", b =>
@@ -184,9 +161,6 @@ namespace CodeFirst.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("DriverID")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -204,9 +178,12 @@ namespace CodeFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("DriverID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Vehicles");
                 });
@@ -240,27 +217,33 @@ namespace CodeFirst.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CarPoolApplication.Models.Rider", "Rider")
+                    b.HasOne("CarPoolApplication.Models.User", "User")
                         .WithMany("Bookings")
-                        .HasForeignKey("RiderID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("CarPoolApplication.Models.Offer", b =>
                 {
-                    b.HasOne("CarPoolApplication.Models.Driver", "Driver")
+                    b.HasOne("CarPoolApplication.Models.User", "User")
                         .WithMany("Offers")
-                        .HasForeignKey("DriverID")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarPoolApplication.Models.Vehicle", null)
+                        .WithMany("Offers")
+                        .HasForeignKey("VehicleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("CarPoolApplication.Models.Vehicle", b =>
                 {
-                    b.HasOne("CarPoolApplication.Models.Driver", "Driver")
+                    b.HasOne("CarPoolApplication.Models.User", "User")
                         .WithMany("Vehicles")
-                        .HasForeignKey("DriverID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

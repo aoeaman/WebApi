@@ -15,12 +15,13 @@ namespace CarPoolApplication.Models
         [Column(TypeName = "nvarchar(15)")]
         public Cities Destination { get; set; }
         public int OfferID { get; set; }
-        public int RiderID { get; set; }
-        public virtual Rider Rider { get; set; }
-        public virtual Offer Offer { get; set; }
+        public int UserID { get; set; }       
         [Required]
         public float Fare { get; set; }
         [Required]
         public byte Seats { get; set; }
+        public bool IsActive { get; set; }
+        public virtual User User { get; set; }
+        public virtual Offer Offer { get; set; }
     }
 }

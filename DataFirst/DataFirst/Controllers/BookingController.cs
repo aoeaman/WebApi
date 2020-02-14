@@ -1,11 +1,13 @@
 ﻿using CarPoolApplication.Models;
 using CodeFirst.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace CodeFirst.Controllers
 {
     [Route ("api/[Controller]")]
+    [Authorize]
     public class BookingController:Controller
     {
         private IBookingService _repos;
@@ -18,10 +20,14 @@ namespace CodeFirst.Controllers
         [HttpPost]
         public string Create([FromBody]Booking booking)
         {
-            if (!ModelState.IsValid)
-                return "Bad";
-            _repos.Add(booking);
-            return "Ok";
+            return _repos.Add(booking).Response.ReasonPhrase;
+        }
+
+        [Route("GetAll")]
+        [HttpGet]
+        public List<Booking> GetAll()
+        {
+            return _repos.GetAll();
         }
 
         [Route("{id}")]
@@ -40,34 +46,34 @@ namespace CodeFirst.Controllers
 
         [Route("Delete/{id:int}")]
         [HttpGet]
-        public void Delete(int id)
+        public string Delete(int id)
         {
-            _repos.Delete(id);
+            return _repos.Delete(id).Response.ReasonPhrase;
         }
 
         [Route("Cancel/{id:int}")]
         [HttpPost]
-        public void Cancel(int id)
+        public string Cancel(int id)
         {
-            _repos.UpdateStatus(id, StatusOfRide.Cancelled);
+            return _repos.UpdateStatus(id, StatusOfRide.Cancelled).Response.ReasonPhrase;
         }
         [Route("Confirm/{id:int}")]
         [HttpPost]
-        public void Confirm(int id)
+        public string Confirm(int id)
         {
-            _repos.UpdateStatus(id, StatusOfRide.Accepted);
+            return _repos.UpdateStatus(id, StatusOfRide.Accepted).Response.ReasonPhrase;
         }
         [Route("Reject/{id:int}")]
         [HttpPost]
-        public void Reject(int id)
+        public string Reject(int id)
         {
-            _repos.UpdateStatus(id, StatusOfRide.Rejected);
+            return _repos.UpdateStatus(id, StatusOfRide.Rejected).Response.ReasonPhrase;
         }
         [Route("Complete/{id:int}")]
         [HttpPost]
-        public void Complete(int id)
+        public string Complete(int id)
         {
-            _repos.UpdateStatus(id, StatusOfRide.Completed);
+            return _repos.UpdateStatus(id, StatusOfRide.Completed).Response.ReasonPhrase;
         }
         [Route("Requests/{id:int}")]
         [HttpGet]
@@ -80,8 +86,6 @@ namespace CodeFirst.Controllers
         public IList<Booking> OfferID(int id)
         {
            return _repos.GetByOfferID(id);
-        }
-
-        
+        }       
     }
 }

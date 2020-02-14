@@ -10,13 +10,16 @@ namespace CodeFirst.Models
     {
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Offer> Offers { get; set; }
-        public DbSet<Rider> Riders { get; set; }
-        public DbSet<Driver> Drivers { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<ViaPoints> ViaPoints { get; set; }
 
         public Context(DbContextOptions <Context> options)
             : base(options)
+        {
+        }
+
+        public Context()
         {
         }
 
