@@ -1,12 +1,14 @@
 ﻿using CarPoolApplication;
 using CarPoolApplication.Models;
 using CodeFirst.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     
     [Route("api/[Controller]")]
+    [Authorize]
     [BasicAuthentication]
     public class UserController :Controller
     {
@@ -16,8 +18,9 @@ namespace CodeFirst.Controllers
             _repos = repos;
         }
 
-        [Route("Create")]
-        [HttpPost]
+        [AllowAnonymous]
+        [Route("Signup")]
+        [HttpPost]       
         public string Create([FromBody] User user)
         {
             return _repos.Add(user).Response.ReasonPhrase;

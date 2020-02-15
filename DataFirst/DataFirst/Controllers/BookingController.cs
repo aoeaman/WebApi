@@ -1,4 +1,5 @@
-﻿using CarPoolApplication.Models;
+﻿using CarPoolApplication;
+using CarPoolApplication.Models;
 using CodeFirst.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route ("api/[Controller]")]
+    [BasicAuthentication]
     [Authorize]
     public class BookingController:Controller
     {

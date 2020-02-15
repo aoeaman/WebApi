@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using System.Net.Http;
@@ -13,6 +10,7 @@ namespace CarPoolApplication
 {
     public class BasicAuthenticationAttribute:AuthorizationFilterAttribute
     {
+        private const string Realm = "My_Realm";
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             if (actionContext.Request.Headers.Authorization == null)

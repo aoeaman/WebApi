@@ -8,6 +8,7 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("api/[Controller]")]
+    [BasicAuthentication]
     [Authorize]
     public class VehicleController:Controller
     {

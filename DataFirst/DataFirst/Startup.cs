@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CarPoolApplication;
+using Thinktecture.IdentityModel.Owin;
+using CarPoolApplication.Concerns;
+
 namespace CodeFirst
 {
     public class Startup
@@ -23,11 +28,11 @@ namespace CodeFirst
         {
             services.AddDbContext<Context>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
 
+
             services.AddSingleton<IUserService,UserService>( );
             services.AddSingleton<IVehicleService, VehicleService>();
             services.AddSingleton<IOfferService, OfferService>();
             services.AddSingleton<IBookingService, BookingService>();
-
             services.AddMvc();
             services.AddControllers();
         }
@@ -41,11 +46,12 @@ namespace CodeFirst
                 app.UseDeveloperExceptionPage();
             }
             
+            
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
-
+            
+            
             //app.Map("/map1", HandleMapTest1);
 
             //app.Map("/map2", HandleMapTest2);
