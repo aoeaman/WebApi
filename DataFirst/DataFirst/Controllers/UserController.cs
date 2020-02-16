@@ -25,6 +25,15 @@ namespace CodeFirst.Controllers
         {
             return _repos.Add(user).Response.ReasonPhrase;
         }
+        
+        [AllowAnonymous]
+        [Route("Login")]
+        [HttpPost]       
+        public string Login([FromBody] Login userdetail)
+        {
+            
+        }
+        
         [Route("GetAll")]
         [HttpGet]
         public List<User> GetAll()
