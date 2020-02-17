@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CarPoolApplication.Services;
 using CodeFirst.Models;
 using Microsoft.AspNetCore.Hosting;

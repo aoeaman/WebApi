@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using System.Linq;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

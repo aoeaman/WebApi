@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Models
+namespace CarPoolApplication.Concerns
 {
     public class User
     {
@@ -32,5 +32,8 @@ namespace CarPoolApplication.Models
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Offer> Offers { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
+
+        public string Role { get; set; }
+        public string Token { get; set; }
     }
 }

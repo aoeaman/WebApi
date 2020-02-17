@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 
 namespace CodeFirst.Services.Interfaces
 {

@@ -1,5 +1,5 @@
 ﻿using CarPoolApplication;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,6 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route ("api/[Controller]")]
-    [BasicAuthentication]
     [Authorize]
     public class BookingController:Controller
     {
@@ -18,6 +17,7 @@ namespace CodeFirst.Controllers
             _repos = repos;
         }
 
+        [Authorize(Roles = Role.SuperUser)]
         [Route("Create")]
         [HttpPost]
         public string Create([FromBody]Booking booking)
@@ -25,6 +25,7 @@ namespace CodeFirst.Controllers
             return _repos.Add(booking).Response.ReasonPhrase;
         }
 
+        [Authorize(Roles = Role.Admin)]
         [Route("GetAll")]
         [HttpGet]
         public List<Booking> GetAll()
@@ -32,6 +33,7 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
+        [Authorize(Roles = Role.User)]
         [Route("{id}")]
         [HttpGet]
         public Booking GetByID(int id)
@@ -39,51 +41,63 @@ namespace CodeFirst.Controllers
             return _repos.GetByID(id);
         }
 
-        [Route("Rider/{id:int}")]
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Rider")]
         [HttpGet]
         public IList<Booking> GetUserBookings(int id)
         {
             return _repos.GetByRiderID(id) ;
         }
 
-        [Route("Delete/{id:int}")]
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Delete")]
         [HttpGet]
         public string Delete(int id)
         {
             return _repos.Delete(id).Response.ReasonPhrase;
         }
 
-        [Route("Cancel/{id:int}")]
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Cancel")]
         [HttpPost]
         public string Cancel(int id)
         {
             return _repos.UpdateStatus(id, StatusOfRide.Cancelled).Response.ReasonPhrase;
         }
-        [Route("Confirm/{id:int}")]
+
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Confirm")]
         [HttpPost]
         public string Confirm(int id)
         {
             return _repos.UpdateStatus(id, StatusOfRide.Accepted).Response.ReasonPhrase;
         }
-        [Route("Reject/{id:int}")]
+
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Reject")]
         [HttpPost]
         public string Reject(int id)
         {
             return _repos.UpdateStatus(id, StatusOfRide.Rejected).Response.ReasonPhrase;
         }
-        [Route("Complete/{id:int}")]
+
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Complete")]
         [HttpPost]
         public string Complete(int id)
         {
             return _repos.UpdateStatus(id, StatusOfRide.Completed).Response.ReasonPhrase;
         }
-        [Route("Requests/{id:int}")]
+
+        [Authorize(Roles = Role.User)]
+        [Route("{id:int}/Requests")]
         [HttpGet]
         public List<Booking> GetAll(int id)
         {
             return _repos.Requests(id);
         }
-        [Route("Offer/{id:int}")]
+
+        [Route("{id:int}/Offer")]
         [HttpGet]
         public IList<Booking> OfferID(int id)
         {

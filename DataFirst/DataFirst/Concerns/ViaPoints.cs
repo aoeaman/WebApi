@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Models
+namespace CarPoolApplication.Concerns
 {
     public class ViaPoints
     {

@@ -1,20 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.Web.Http;
+using System.Threading.Tasks;
+using CarPoolApplication.Helpers;
+using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CarPoolApplication.Services
 {
     public class UserService : IUserService
     {
         readonly IServiceScope _scope;
-        public UserService(IServiceProvider service)
+        private readonly AppSettings _appSettings;
+        public UserService(IServiceProvider service,IOptions<AppSettings> appSettings)
         {          
             _scope = service.CreateScope();
+            _appSettings = appSettings.Value;
         }
         public HttpResponseException Add(User user)
         {
@@ -67,7 +76,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Users.ToList();
+                return _scope.ServiceProvider.GetRequiredService<Context>().Users.ToList().WithoutPasswords();
             }
             catch (Exception)
             {
@@ -75,17 +84,53 @@ namespace CarPoolApplication.Services
             }
             
         }
-
         public User GetByID(int id)
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Users.Find(id);
+                return _scope.ServiceProvider.GetRequiredService<Context>().Users.Find(id).WithoutPassword();
             }
             catch (Exception)
             {
                 return null;
             }           
+        }
+        public User Authenticate(string username, string password)
+        {
+            Context _context;
+            try
+            {
+                _context = _scope.ServiceProvider.GetRequiredService<Context>();
+                var user = _context.Users.SingleOrDefault(x => x.Username == username && x.Password == password);
+
+                // return null if user not found
+                if (user == null)
+                    return null;
+
+                // authentication successful so generate jwt token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.Name, user.ID.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                user.Token = tokenHandler.WriteToken(token);
+
+                return user.WithoutPassword();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+
         }
     }
 }

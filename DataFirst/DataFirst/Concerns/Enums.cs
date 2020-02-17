@@ -1,4 +1,4 @@
-﻿namespace CarPoolApplication.Models
+﻿namespace CarPoolApplication.Concerns
 {
     public enum StatusOfRide
     {

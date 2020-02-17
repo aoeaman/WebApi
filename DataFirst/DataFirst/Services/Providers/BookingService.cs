@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using CarPoolApplication.Helpers;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CarPoolApplication;
-using Thinktecture.IdentityModel.Owin;
-using CarPoolApplication.Concerns;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CodeFirst
 {
@@ -24,17 +25,46 @@ namespace CodeFirst
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [System.Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Context>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
-
-
-            services.AddSingleton<IUserService,UserService>( );
-            services.AddSingleton<IVehicleService, VehicleService>();
-            services.AddSingleton<IOfferService, OfferService>();
-            services.AddSingleton<IBookingService, BookingService>();
-            services.AddMvc();
+            services.AddCors();
             services.AddControllers();
+
+            // configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+
+            services.AddDbContext<Context>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));          
+            services.AddScoped<IUserService,UserService>( );
+            services.AddScoped<IVehicleService, VehicleService>();
+            services.AddScoped<IOfferService, OfferService>();
+            services.AddScoped<IBookingService, BookingService>();
+
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,8 +75,11 @@ namespace CodeFirst
             {
                 app.UseDeveloperExceptionPage();
             }
-            
-            
+            app.UseCors(x => x
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

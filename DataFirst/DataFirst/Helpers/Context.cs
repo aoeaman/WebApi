@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

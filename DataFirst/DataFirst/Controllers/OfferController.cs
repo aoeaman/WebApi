@@ -1,5 +1,5 @@
 ﻿using CarPoolApplication;
-using CarPoolApplication.Models;
+using CarPoolApplication.Concerns;
 using CodeFirst.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,6 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("api/[Controller]")]
-    [BasicAuthentication]
     [Authorize]
     public class OfferController:Controller
     {        
@@ -24,6 +23,8 @@ namespace CodeFirst.Controllers
         {
             return _repos.Add(offer).Response.ReasonPhrase;
         }
+
+        [Authorize(Roles = "Admin")]
         [Route( "GetAll")]
         [HttpGet]
         public List<Offer> GetAll()
