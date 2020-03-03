@@ -26,6 +26,7 @@ namespace CodeFirst.Controllers
         {
             return _repos.Add(user).Response.ReasonPhrase;
         }
+
         [AllowAnonymous]
         [HttpPost("Login")]
         public IActionResult Authenticate([FromBody]Login model)

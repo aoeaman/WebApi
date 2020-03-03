@@ -17,7 +17,7 @@ namespace CodeFirst.Controllers
             _repos = repos;
         }
 
-        [Authorize(Roles = Role.SuperUser)]
+        [Authorize(Roles = Role.User)]
         [Route("Create")]
         [HttpPost]
         public string Create([FromBody]Booking booking)

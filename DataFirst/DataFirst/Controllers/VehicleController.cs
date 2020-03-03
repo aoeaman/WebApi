@@ -37,7 +37,7 @@ namespace CodeFirst.Controllers
         {
             return _repos.GetByID(id);
         }
-        [Authorize(Roles = Role.SuperUser)]
+        [Authorize(Roles = Role.User)]
         [Route("Disable/{id:int}")]
         [HttpPut]
         public string Disable(int id)
