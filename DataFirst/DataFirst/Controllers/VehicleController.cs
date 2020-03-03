@@ -7,20 +7,25 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("api/[Controller]")]
-    [Authorize]
+    [Authorize(Roles = Role.User)]
     public class VehicleController:Controller
     {
-        private IVehicleService _repos;
+        private readonly IVehicleService _repos;
         public VehicleController(IVehicleService repos)
         {
             _repos = repos;
         }
-        [Authorize(Roles = Role.User)]
+        
         [Route("Create")]
         [HttpPost]
-        public string Create([FromBody] Vehicle vehicle)
+        public IActionResult Create([FromBody] Vehicle Model)
         {
-            return _repos.Add(vehicle).Response.ReasonPhrase;
+            var vehicle = _repos.Add(Model);
+            if (vehicle == null)
+            {
+                return BadRequest(new { message = "Error Occured" });
+            }
+            return Ok(new { message = "Successfully Created with ID = " + vehicle.ID });
         }
         [Authorize(Roles = Role.Admin)]
         [Route("GetAll")]
@@ -30,26 +35,25 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Authorize]
         [Route("{id:int}")]
         [HttpGet]
         public Vehicle GetByID(int id)
         {
             return _repos.GetByID(id);
         }
-        [Authorize(Roles = Role.User)]
+
         [Route("Disable/{id:int}")]
         [HttpPut]
         public string Disable(int id)
         {
-            return _repos.Disable(id).Response.ReasonPhrase;
+            return _repos.Disable(id);
         }
-        [Authorize(Roles = Role.User)]
+
         [Route("Delete/{id:int}")]
         [HttpDelete]
         public string Delete(int id)
         {
-            return _repos.Delete(id).Response.ReasonPhrase;
+            return _repos.Delete(id);
         }
     }
 }

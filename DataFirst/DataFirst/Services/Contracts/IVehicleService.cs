@@ -5,6 +5,6 @@ namespace CodeFirst.Services.Interfaces
 {
     public interface IVehicleService : IBaseService<Vehicle>
     {
-        HttpResponseException Disable(int id);
+        string Disable(int id);
     }
 }

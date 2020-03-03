@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace CodeFirst.Controllers
 {
     [Route("api/[Controller]")]
-    [Authorize]
+    [Authorize(Roles =Role.User)]
     public class OfferController:Controller
     {        
         private readonly IOfferService _repos;
@@ -19,9 +19,22 @@ namespace CodeFirst.Controllers
 
         [Route("Create")]
         [HttpPost]
-        public string Create([FromBody]Offer offer)
+        public IActionResult Create([FromBody]Offer Model)
         {
-            return _repos.Add(offer).Response.ReasonPhrase;
+            var offer = _repos.Add(Model);
+            if (offer == null)
+            {
+                return BadRequest(new { message = "Error Occured" });
+            }
+            return Ok(new { message = "Successfully Created with ID = " + offer.ID });
+
+        }
+
+        [Route("delete/{id:int}")]
+        [HttpPut]
+        public string Delete(int id)
+        {
+            return _repos.Delete(id);
         }
 
         [Authorize(Roles = "Admin")]
@@ -32,24 +45,24 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("{id:int}")]
+        [Route("{id}")]
         [HttpGet]
         public Offer GetByID(int id)
         {
             return _repos.GetByID(id);
         }
-        [Route("Cancel/{id:int}")]
+        [Route("Cancel/{id}")]
         [HttpGet]
         public string Cancel(int id)
         {       
-                return _repos.UpdateStatus(id,StatusOfRide.Cancelled).Response.ReasonPhrase;            
+                return _repos.UpdateStatus(id,StatusOfRide.Cancelled);            
         }
 
-        [Route("Cancel/{id:int}")]
+        [Route("Cancel/{id}")]
         [HttpGet]
         public string Complete(int id)
         {
-           return _repos.UpdateStatus(id, StatusOfRide.Completed).Response.ReasonPhrase;
+           return _repos.UpdateStatus(id, StatusOfRide.Completed);
            
         }
 

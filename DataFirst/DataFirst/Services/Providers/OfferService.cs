@@ -13,21 +13,15 @@ namespace CarPoolApplication.Services
 
     {
         private readonly IServiceScope _scope;
+        readonly Context _context;
         public OfferService(IServiceProvider service)
         {
-            _scope = service.CreateScope();           
+            _scope = service.CreateScope();
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public HttpResponseException Add(Offer offer)
+        public Offer Add(Offer offer)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
+
             try
             {                
                 offer.CurrentLocaton = offer.Source;
@@ -35,19 +29,19 @@ namespace CarPoolApplication.Services
                 offer.IsActive = true;
                 _context.Offers.Add(offer);
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+                return offer;
             }
             catch (Exception)
             {
                 _context.Offers.Remove(offer);
-                return new HttpResponseException(System.Net.HttpStatusCode.Conflict);
+                return null;
             }            
         }
         public List<Offer> GetAll()
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Offers.ToList();
+                return _context.Offers.ToList();
             }
             catch (Exception)
             {
@@ -55,17 +49,8 @@ namespace CarPoolApplication.Services
             }
 
         }
-        public HttpResponseException UpdateStatus(int id, StatusOfRide status)
+        public string UpdateStatus(int id, StatusOfRide status)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {
                 var offer = _context.Offers.Find(id);
@@ -75,50 +60,50 @@ namespace CarPoolApplication.Services
                         if (offer.Status == StatusOfRide.Created && offer.Source == offer.CurrentLocaton)
                         {
                             offer.Status = status;
-                            return new HttpResponseException(System.Net.HttpStatusCode.OK);
+                            return Status.Ok.ToString();
                         }
                         else
                         {
-                            return new HttpResponseException(System.Net.HttpStatusCode.NotModified);
+                            return Status.UnableToPerformAction.ToString();
                         }
 
                     case StatusOfRide.Completed:
                         if (offer.Status == StatusOfRide.Created)
                         {
                             offer.Status = status;
-                            _context.Bookings.ToList().ForEach(_ =>
+                            _context.Bookings.ToList().ForEach(b =>
                             {
-                                if (_.OfferID == id)
+                                if (b.OfferID == id)
                                 {
-                                    if (_.Status == StatusOfRide.Accepted)
+                                    if (b.Status == StatusOfRide.Accepted)
                                     {
-                                        _.Status = StatusOfRide.Completed;
+                                        b.Status = StatusOfRide.Completed;
                                     }
                                     else
                                     {
-                                        _.Status = StatusOfRide.Rejected;
+                                        b.Status = StatusOfRide.Rejected;
                                     }
                                 }
                             });
-                            return new HttpResponseException(System.Net.HttpStatusCode.OK); ;
+                            return Status.Ok.ToString();
                         }
                         else
                         {
-                            return new HttpResponseException(System.Net.HttpStatusCode.NotModified);
+                            return Status.UnableToPerformAction.ToString(); 
                         }
                 }
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.MethodNotAllowed);
+                return Status.Failed.ToString();
             }
         }
         public Offer GetByID(int id)
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Offers.Find(id);
+                return _context.Offers.Find(id);
             }
             catch (Exception)
             {
@@ -129,32 +114,23 @@ namespace CarPoolApplication.Services
         {
             throw new NotImplementedException();
         }
-        public HttpResponseException Delete(int id)
+        public string Delete(int id)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {              
                 _context.Offers.Find(id).IsActive=false;
-                return new HttpResponseException(System.Net.HttpStatusCode.OK);
+                return Status.Ok.ToString();
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
         }
         public List<Offer> GetByDriver(int id)
         {
             try
             {
-                return GetAll().FindAll(_ => _.UserID == id);
+                return GetAll().FindAll(p => p.UserID == id);
             }
             catch (Exception)
             {
@@ -166,9 +142,8 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                var _context = _scope.ServiceProvider.GetRequiredService<Context>();
                 List<Offer> Offers = new List<Offer>();
-                foreach (Offer offer in GetAll().FindAll(_ => _.Status == StatusOfRide.Created))
+                foreach (Offer offer in GetAll().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
                 {
                     if (ValidateOfferRoute(offer, source, destination, seats))
                     {
@@ -188,9 +163,7 @@ namespace CarPoolApplication.Services
             }
         }
         bool ValidateOfferRoute(Offer offer,Cities source,Cities destination,int seats)
-        {
-            var _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            
+        {        
             int MaxSeats = offer.SeatsAvailable;
             List<Cities> Route = _context.ViaPoints.Where(P => P.OfferID == offer.ID).Select(p => p.City).ToList();
 
@@ -204,7 +177,7 @@ namespace CarPoolApplication.Services
 
             if (Route.IndexOf(source) != -1 && Route.IndexOf(source) < Route.IndexOf(destination))
             {
-                List<Booking> AssociatedBookings = _context.Bookings.ToList().FindAll(_ => _.OfferID == offer.ID && _.Status == StatusOfRide.Accepted);
+                List<Booking> AssociatedBookings = _context.Bookings.ToList().FindAll(b => b.OfferID == offer.ID && b.Status == StatusOfRide.Accepted);
                 bool Flag = false;
                 foreach (Cities Node in Route)
                 {

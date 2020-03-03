@@ -9,7 +9,7 @@ namespace CodeFirst.Services.Interfaces
     public interface IOfferService : IBaseService<Offer>
     {
         Offer Update(Offer offer);
-        HttpResponseException UpdateStatus(int id, StatusOfRide status);
+        string UpdateStatus(int id, StatusOfRide status);
         List<Offer> FilterOffer(Cities source, Cities destination,int seats);
     }
 }

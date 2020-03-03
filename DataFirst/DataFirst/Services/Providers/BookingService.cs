@@ -5,63 +5,47 @@ using CarPoolApplication.Concerns;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using System.Web.Http;
 
 namespace CarPoolApplication.Services
 {
     public class BookingService : IBookingService
     {
         private readonly IServiceScope _scope;
+        readonly Context _context;
         public BookingService(IServiceProvider service)
         {
             _scope = service.CreateScope();
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
 
-        public HttpResponseException UpdateStatus(int id, StatusOfRide status)
+        public string UpdateStatus(int id, StatusOfRide status)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
+            
             try
             {
                 GetByID(id).Status = status;
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.OK);
+                return Status.Ok.ToString();
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
         }
 
-        public HttpResponseException Add(Booking entity)
+        public Booking Add(Booking entity)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {               
                 entity.Status = StatusOfRide.Pending;
                 entity.IsActive = true;
                 _context.Bookings.Add(entity);
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+                return entity;
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.Conflict);
+                return null;
             }
 
         }
@@ -70,7 +54,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList();
+                return _context.Bookings.ToList();
             }
             catch (Exception)
             {
@@ -81,28 +65,20 @@ namespace CarPoolApplication.Services
 
         public List<Booking> Requests(int id)
         {          
-            return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.OfferID == id && _.Status == StatusOfRide.Pending);
+            return _context.Bookings.ToList().FindAll(b => b.OfferID == id && b.Status == StatusOfRide.Pending);
         }
-        public HttpResponseException Delete(int id)
+        public string Delete(int id)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
+
             try
             {
                 _context.Bookings.Find(id).IsActive=false;
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+                return Status.Ok.ToString();
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
            
         }
@@ -111,7 +87,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.Find(id);
+                return _context.Bookings.Find(id);
             }
             catch
             {
@@ -124,7 +100,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.UserID == id);
+                return _context.Bookings.ToList().FindAll(b => b.UserID == id);
             }
             catch
             {
@@ -137,7 +113,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Bookings.ToList().FindAll(_ => _.OfferID == id);
+                return _context.Bookings.ToList().FindAll(b => b.OfferID == id);
             }
             catch
             {

@@ -8,27 +8,31 @@ using System.Collections.Generic;
 
 namespace CodeFirst.Controllers
 {
-
+    [Authorize(Roles =Role.User)]
     [Route("api/[Controller]")]
-    [Authorize]
     public class UserController :Controller
     {
-        private IUserService _repos;
+        private readonly IUserService _repos;
         public UserController(IUserService repos)
         {
             _repos = repos;
         }
 
-        [AllowAnonymous]
         [Route("Signup")]
+        [AllowAnonymous]
         [HttpPost]       
-        public string Create([FromBody] User user)
+        public IActionResult Create([FromBody] User Model)
         {
-            return _repos.Add(user).Response.ReasonPhrase;
+            var user = _repos.Add(Model);
+            if (user == null)
+                return BadRequest(new { message = "Username Already Exists" });
+
+            return Ok(new { message = "Successfully Created with ID = "+ user.ID });
+            
         }
 
-        [AllowAnonymous]
         [HttpPost("Login")]
+        [AllowAnonymous]
         public IActionResult Authenticate([FromBody]Login model)
         {
             var user = _repos.Authenticate(model.Username, model.Password);
@@ -46,11 +50,19 @@ namespace CodeFirst.Controllers
         {
             return _repos.GetAll();
         }
-        [Route("{id:int}")]
+
+        [Route("{id}")]
         [HttpGet]
         public User GetByID(int id)
         {
             return _repos.GetByID(id);
+        }
+
+        [Route("delete/{id}")]
+        [HttpPut]
+        public string Delete(int id)
+        {
+            return _repos.Delete(id);
         }
     }
 }

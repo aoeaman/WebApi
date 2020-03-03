@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Http;
 using CarPoolApplication.Concerns;
 using CodeFirst.Models;
 using CodeFirst.Services.Interfaces;
@@ -12,54 +11,38 @@ namespace CarPoolApplication.Services
     public class VehicleService:IVehicleService
     {
         private readonly IServiceScope _scope;
+        readonly Context _context;
         public VehicleService(IServiceProvider service)
         {
             _scope = service.CreateScope();
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public HttpResponseException Add(Vehicle vehicle)
-        {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
+        public Vehicle Add(Vehicle vehicle)
+        {          
             try
             {               
                 vehicle.IsActive = true;
                 _context.Vehicles.Add(vehicle);
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+                return vehicle;
 
             }
             catch (Exception)
             {
                 _context.Vehicles.Remove(vehicle);
-                return new HttpResponseException(System.Net.HttpStatusCode.Conflict);
+                return null;
             }
         }
-        public HttpResponseException Delete(int id)
+        public string Delete(int id)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {
                 _context.Vehicles.Remove(GetByID(id));
-                return new HttpResponseException(System.Net.HttpStatusCode.OK);
+                return Status.Ok.ToString();
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
             
         }
@@ -68,7 +51,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.ToList();
+                return _context.Vehicles.ToList();
             }
             catch
             {             
@@ -79,47 +62,38 @@ namespace CarPoolApplication.Services
         {
             try
             { 
-            return _scope.ServiceProvider.GetRequiredService<Context>().Vehicles.Find(id);
+            return _context.Vehicles.Find(id);
             }
             catch (Exception)
             {
                 return null;
             }
         }
-        public HttpResponseException Disable(int id)
+        public string Disable(int id)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {
                 var vehicle = _context.Vehicles.Find(id);
                 if (vehicle.IsActive)
                 {
-                    if (_context.Offers.Any(_ => _.VehicleID == id))
+                    if (_context.Offers.Any(v => v.VehicleID == id))
                     {
-                        return new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
+                        return Status.Failed.ToString();
                     }
                     else
                     {
                         vehicle.IsActive = false;
-                        return new HttpResponseException(System.Net.HttpStatusCode.OK);
+                        return Status.Ok.ToString();
                     }
                 }
                 else
                 {
-                    return new HttpResponseException(System.Net.HttpStatusCode.Conflict);
+                    return Status.Failed.ToString();
                 }
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.NotFound.ToString();
             }
         }
     }

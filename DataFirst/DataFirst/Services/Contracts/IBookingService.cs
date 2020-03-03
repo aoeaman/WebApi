@@ -10,7 +10,7 @@ namespace CodeFirst.Services.Interfaces
     {
         IList<Booking> GetByRiderID(int id);
 
-        HttpResponseException UpdateStatus(int id, StatusOfRide status);       
+        string UpdateStatus(int id, StatusOfRide status);       
         IList<Booking> GetByOfferID(int id);
         List<Booking> Requests(int id);
     }

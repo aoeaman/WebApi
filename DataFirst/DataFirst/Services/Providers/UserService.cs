@@ -5,8 +5,6 @@ using CodeFirst.Services.Interfaces;
 using CodeFirst.Models;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using System.Web.Http;
-using System.Threading.Tasks;
 using CarPoolApplication.Helpers;
 using System.Text;
 using Microsoft.Extensions.Options;
@@ -20,55 +18,47 @@ namespace CarPoolApplication.Services
     {
         readonly IServiceScope _scope;
         private readonly AppSettings _appSettings;
+        readonly Context _context;
+
         public UserService(IServiceProvider service,IOptions<AppSettings> appSettings)
         {          
             _scope = service.CreateScope();
             _appSettings = appSettings.Value;
+            _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public HttpResponseException Add(User user)
+        public User Add(User user)
         {
-            Context _context;
-            try
-            {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
             try
             {               
                 user.IsActive = true;
                 _context.Users.Add(user);
                 _context.SaveChanges();
-                return new HttpResponseException(System.Net.HttpStatusCode.Created);
+                return user;
             }
             catch (Exception)
             {
                 _context.Users.Remove(user);
-                return new HttpResponseException(System.Net.HttpStatusCode.Conflict );
+                return null;
             }
 
         }
-        public HttpResponseException Delete(int id)
+        public string Delete(int id)
         {
-            Context _context;
             try
             {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
+                if (_context.Users.Find(id).IsActive)
+                {
+                    _context.Users.Find(id).IsActive = false;
+                    return Status.Ok.ToString();
+                }
+                else
+                {
+                    return Status.UnableToPerformAction.ToString();
+                }
             }
             catch (Exception)
             {
-                return new HttpResponseException(System.Net.HttpStatusCode.BadGateway);
-            }
-            try
-            {             
-                _context.Users.Find(id).IsActive=false;
-                return new HttpResponseException(System.Net.HttpStatusCode.OK);
-            }
-            catch (Exception)
-            {
-                return new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return Status.DbError.ToString();
             }
             
         }
@@ -76,7 +66,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Users.ToList().WithoutPasswords();
+                return _context.Users.ToList().WithoutPasswords();
             }
             catch (Exception)
             {
@@ -88,7 +78,7 @@ namespace CarPoolApplication.Services
         {
             try
             {
-                return _scope.ServiceProvider.GetRequiredService<Context>().Users.Find(id).WithoutPassword();
+                return _context.Users.Find(id).WithoutPassword();
             }
             catch (Exception)
             {
@@ -97,10 +87,8 @@ namespace CarPoolApplication.Services
         }
         public User Authenticate(string username, string password)
         {
-            Context _context;
             try
             {
-                _context = _scope.ServiceProvider.GetRequiredService<Context>();
                 var user = _context.Users.SingleOrDefault(x => x.Username == username && x.Password == password);
 
                 // return null if user not found
