@@ -26,7 +26,7 @@ namespace CodeFirst.Controllers
             {
                 return BadRequest(new { message = "Error Occured" });
             }
-            return Ok(new { message = "Successfully Created with ID = " + offer.ID });
+            return Ok(new { message = offer.ID });
 
         }
 

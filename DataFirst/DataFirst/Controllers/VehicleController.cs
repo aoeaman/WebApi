@@ -25,7 +25,7 @@ namespace CodeFirst.Controllers
             {
                 return BadRequest(new { message = "Error Occured" });
             }
-            return Ok(new { message = "Successfully Created with ID = " + vehicle.ID });
+            return Ok(new { message =vehicle.ID });
         }
         [Authorize(Roles = Role.Admin)]
         [Route("GetAll")]

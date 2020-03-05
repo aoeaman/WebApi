@@ -27,7 +27,7 @@ namespace CodeFirst.Controllers
             if (user == null)
                 return BadRequest(new { message = "Username Already Exists" });
 
-            return Ok(new { message = "Successfully Created with ID = "+ user.ID });
+            return Ok(new { message = + user.ID });
             
         }
 
