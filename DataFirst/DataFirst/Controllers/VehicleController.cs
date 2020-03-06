@@ -1,26 +1,30 @@
-﻿using CarPoolApplication.Concerns;
-using CodeFirst.Services.Interfaces;
+﻿using CarPool.Services.Contracts;
+using CarPool.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using AutoMapper;
+using CarPool.Application.Models;
 
 namespace CodeFirst.Controllers
 {
+    [Authorize]
     [Route("api/[Controller]")]
-    [Authorize(Roles = Role.User)]
     public class VehicleController:Controller
     {
         private readonly IVehicleService _repos;
-        public VehicleController(IVehicleService repos)
+        private readonly IMapper _mapper;
+        public VehicleController(IVehicleService repos,IMapper mapper)
         {
             _repos = repos;
+            _mapper = mapper;
         }
         
         [Route("Create")]
         [HttpPost]
         public IActionResult Create([FromBody] Vehicle Model)
         {
-            var vehicle = _repos.Add(Model);
+            var vehicle = _repos.Add(_mapper.Map<VehicleDBO>(Model));
             if (vehicle == null)
             {
                 return BadRequest(new { message = "Error Occured" });
@@ -32,14 +36,19 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Vehicle> GetAll()
         {
-            return _repos.GetAll();
+            List<Vehicle> Vehicles = new List<Vehicle>();
+            foreach(var vehicle in _repos.GetAll())
+            {
+                Vehicles.Add(_mapper.Map<Vehicle>(vehicle));
+            }
+            return Vehicles;
         }
 
         [Route("{id:int}")]
         [HttpGet]
         public Vehicle GetByID(int id)
         {
-            return _repos.GetByID(id);
+            return _mapper.Map<Vehicle>(_repos.GetByID(id));
         }
 
         [Route("Disable/{id:int}")]

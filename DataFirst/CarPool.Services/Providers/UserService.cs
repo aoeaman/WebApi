@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolApplication.Concerns;
-using CodeFirst.Services.Interfaces;
-using CodeFirst.Models;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using CarPoolApplication.Helpers;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CarPool.Data.Models;
+using CarPool.Services.Contracts;
+using CarPool.Helpers;
 
-namespace CarPoolApplication.Services
+namespace CarPool.Services.Providers
 {
     public class UserService : IUserService
     {
@@ -26,10 +25,12 @@ namespace CarPoolApplication.Services
             _appSettings = appSettings.Value;
             _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public User Add(User user)
+        public UserDBO Add(UserDBO user)
         {
             try
-            {               
+            {
+                user.Role = user.DrivingLiscenceNumber == null ?Role.User :Role.Admin;
+              
                 user.IsActive = true;
                 _context.Users.Add(user);
                 _context.SaveChanges();
@@ -62,7 +63,7 @@ namespace CarPoolApplication.Services
             }
             
         }
-        public List<User> GetAll()
+        public List<UserDBO> GetAll()
         {
             try
             {
@@ -74,7 +75,7 @@ namespace CarPoolApplication.Services
             }
             
         }
-        public User GetByID(int id)
+        public UserDBO GetByID(int id)
         {
             try
             {
@@ -85,7 +86,7 @@ namespace CarPoolApplication.Services
                 return null;
             }           
         }
-        public User Authenticate(string username, string password)
+        public UserDBO Authenticate(string username, string password)
         {
             try
             {

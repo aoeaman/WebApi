@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace CodeFirst.Services.Interfaces
+namespace CarPool.Services.Contracts
 {
     public interface IBaseService<T> 
     { 
+
         T Add(T entity);
         string Delete(int id);
         List<T> GetAll();

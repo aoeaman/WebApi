@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Concerns
+
+namespace CarPool.Data.Models
 {
-    public class Vehicle
+    public class VehicleDBO
     {
+        public VehicleDBO()
+        {
+            Offers = new HashSet<OfferDBO>();
+        }
+
         [Key]
-        [Column(Order = 1)]
         public int ID { get; set; }
         public int UserID { get; set; }
         public string Maker { get; set; }
@@ -15,7 +19,7 @@ namespace CarPoolApplication.Concerns
         public byte Seats { get; set; }
         public bool IsActive { get; set; }
         public VehicleType Type { get; set; }      
-        public virtual User User { get; set; }
-        public virtual IList<Offer> Offers { get; set; }
+        public virtual UserDBO User { get; set; }
+        public virtual ICollection<OfferDBO> Offers { get; set; }
     }
 }

@@ -1,12 +1,11 @@
-﻿using CarPoolApplication.Concerns;
+﻿using CarPool.Data.Models;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace CarPoolApplication.Helpers
-{
+namespace CarPool.Helpers
+{ 
     public static class ExtensionMethods
     {
-        public static List<User> WithoutPasswords(this List<User> users)
+        public static List<UserDBO> WithoutPasswords(this List<UserDBO> users)
         {
             if (users == null) return null;
 
@@ -14,7 +13,7 @@ namespace CarPoolApplication.Helpers
             return users;
         }
 
-        public static User WithoutPassword(this User user)
+        public static UserDBO WithoutPassword(this UserDBO user)
         {
             if (user == null) return null;
 

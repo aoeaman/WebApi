@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Concerns
-{
-    public class ViaPoints
+namespace CarPool.Data.Models
+{ 
+    public class ViaPointsDBO
     {
         [Key]
         public int ID { get; set; }
@@ -12,6 +12,6 @@ namespace CarPoolApplication.Concerns
         [Column(TypeName ="nvarchar(10)")]
         public Cities City { get; set; }
         [Required]
-        public virtual Offer Offer { get; set; }
+        public virtual OfferDBO Offer { get; set; }
     }
 }

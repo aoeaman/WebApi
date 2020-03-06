@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CarPoolApplication.Migrations
+namespace CarPool.Migrations
 {
     public partial class @new : Migration
     {

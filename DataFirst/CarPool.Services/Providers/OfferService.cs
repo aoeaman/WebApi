@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolApplication.Concerns;
-using CodeFirst.Services.Interfaces;
-using CodeFirst.Models;
 using System.Linq;
+using CarPool.Helpers;
+using CarPool.Services.Contracts;
+using CarPool.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
-using System.Web.Http;
 
-namespace CarPoolApplication.Services
+namespace CarPool.Services.Providers
 {
     public class OfferService:IOfferService
 
@@ -19,7 +18,7 @@ namespace CarPoolApplication.Services
             _scope = service.CreateScope();
             _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public Offer Add(Offer offer)
+        public OfferDBO Add(OfferDBO offer)
         {
 
             try
@@ -27,6 +26,7 @@ namespace CarPoolApplication.Services
                 offer.CurrentLocaton = offer.Source;
                 offer.Status = StatusOfRide.Created;
                 offer.IsActive = true;
+                offer.Earnings = 0;
                 _context.Offers.Add(offer);
                 _context.SaveChanges();
                 return offer;
@@ -37,7 +37,7 @@ namespace CarPoolApplication.Services
                 return null;
             }            
         }
-        public List<Offer> GetAll()
+        public List<OfferDBO> GetAll()
         {
             try
             {
@@ -99,7 +99,7 @@ namespace CarPoolApplication.Services
                 return Status.Failed.ToString();
             }
         }
-        public Offer GetByID(int id)
+        public OfferDBO GetByID(int id)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace CarPoolApplication.Services
                 return null;
             }
         }
-        public Offer Update(Offer Offer)
+        public OfferDBO Update(OfferDBO Offer)
         {
             throw new NotImplementedException();
         }
@@ -126,7 +126,7 @@ namespace CarPoolApplication.Services
                 return Status.NotFound.ToString();
             }
         }
-        public List<Offer> GetByDriver(int id)
+        public List<OfferDBO> GetByDriver(int id)
         {
             try
             {
@@ -138,12 +138,12 @@ namespace CarPoolApplication.Services
             }
             
         }
-        public List<Offer> FilterOffer(Cities source, Cities destination, int seats)
+        public List<OfferDBO> FilterOffer(Cities source, Cities destination, int seats)
         {
             try
             {
-                List<Offer> Offers = new List<Offer>();
-                foreach (Offer offer in GetAll().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
+                List<OfferDBO> Offers = new List<OfferDBO>();
+                foreach (OfferDBO offer in GetAll().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
                 {
                     if (ValidateOfferRoute(offer, source, destination, seats))
                     {
@@ -162,7 +162,7 @@ namespace CarPoolApplication.Services
                 return null;
             }
         }
-        bool ValidateOfferRoute(Offer offer,Cities source,Cities destination,int seats)
+        bool ValidateOfferRoute(OfferDBO offer,Cities source,Cities destination,int seats)
         {        
             int MaxSeats = offer.SeatsAvailable;
             List<Cities> Route = _context.ViaPoints.Where(P => P.OfferID == offer.ID).Select(p => p.City).ToList();
@@ -177,7 +177,7 @@ namespace CarPoolApplication.Services
 
             if (Route.IndexOf(source) != -1 && Route.IndexOf(source) < Route.IndexOf(destination))
             {
-                List<Booking> AssociatedBookings = _context.Bookings.ToList().FindAll(b => b.OfferID == offer.ID && b.Status == StatusOfRide.Accepted);
+                List<BookingDBO> AssociatedBookings = _context.Bookings.ToList().FindAll(b => b.OfferID == offer.ID && b.Status == StatusOfRide.Accepted);
                 bool Flag = false;
                 foreach (Cities Node in Route)
                 {
@@ -192,7 +192,7 @@ namespace CarPoolApplication.Services
                             break;
                         }
                     }
-                    foreach (Booking Element in AssociatedBookings)
+                    foreach (BookingDBO Element in AssociatedBookings)
                     {
                         if (Node == Element.Source)
                         {

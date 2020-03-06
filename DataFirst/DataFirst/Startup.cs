@@ -1,17 +1,16 @@
-using CarPoolApplication.Services;
-using CodeFirst.Services.Interfaces;
-using CodeFirst.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Authentication;
-using CarPoolApplication.Helpers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using CarPool.Helpers;
+using CarPool.Services.Providers;
+using CarPool.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace CodeFirst
 {
@@ -30,6 +29,8 @@ namespace CodeFirst
         {
             services.AddCors();
             services.AddControllers();
+            //Adding AutoMapper
+            services.AddAutoMapper(c => c.AddProfile<AutoMapping>(), typeof(Startup));
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");

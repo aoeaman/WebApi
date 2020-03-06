@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Concerns
+namespace CarPool.Data.Models
 {
-    public class Offer
+    public class OfferDBO
     {
-        public Offer()
+        public OfferDBO()
         {
-            ViaPoints = new HashSet<ViaPoints>();
+            ViaPoints = new HashSet<ViaPointsDBO>();
         }
 
         [Key]
@@ -26,7 +26,7 @@ namespace CarPoolApplication.Concerns
         public Cities Destination { get; set; }
         [Column(TypeName = "nvarchar(15)")]
         public Cities CurrentLocaton { get; set; }       
-        public virtual User User { get; set; }
+        public virtual UserDBO User { get; set; }
         [Required]
         public DateTime StartDate { get; set; }
         [Required]
@@ -36,6 +36,6 @@ namespace CarPoolApplication.Concerns
         public bool IsActive { get; set; }
         public float Earnings { get; set; }
         [Required]
-        public virtual ICollection< ViaPoints> ViaPoints { get; set; }      
+        public virtual ICollection< ViaPointsDBO> ViaPoints { get; set; }      
     }
 }

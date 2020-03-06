@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CarPoolApplication.Concerns;
-using CodeFirst.Models;
-using CodeFirst.Services.Interfaces;
+using CarPool.Helpers;
+using CarPool.Services.Contracts;
+using CarPool.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarPoolApplication.Services
+namespace CarPool.Services.Providers
 {
     public class VehicleService:IVehicleService
     {
@@ -17,7 +17,7 @@ namespace CarPoolApplication.Services
             _scope = service.CreateScope();
             _context = _scope.ServiceProvider.GetRequiredService<Context>();
         }
-        public Vehicle Add(Vehicle vehicle)
+        public VehicleDBO Add(VehicleDBO vehicle)
         {          
             try
             {               
@@ -47,7 +47,7 @@ namespace CarPoolApplication.Services
             
         }
 
-        public List<Vehicle> GetAll()
+        public List<VehicleDBO> GetAll()
         {
             try
             {
@@ -58,7 +58,7 @@ namespace CarPoolApplication.Services
                 return null;           
             }
         }
-        public Vehicle GetByID(int id)
+        public VehicleDBO GetByID(int id)
         {
             try
             { 

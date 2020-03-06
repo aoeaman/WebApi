@@ -1,27 +1,32 @@
-﻿using CarPoolApplication;
-using CarPoolApplication.Concerns;
-using CodeFirst.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CarPool.Services.Contracts;
+using CarPool.Data.Models;
 using System.Collections.Generic;
+using AutoMapper;
+using CarPool.Application.Models;
 
 namespace CodeFirst.Controllers
 {
+    [Authorize(Roles = Role.User)]
     [Route("api/[Controller]")]
-    [Authorize(Roles =Role.User)]
     public class OfferController:Controller
-    {        
+    {
+        private readonly IMapper _mapper;
         private readonly IOfferService _repos;
-        public OfferController(IOfferService repos)
+        public OfferController(IOfferService repos,IMapper mapper)
         {
             _repos = repos;
+            _mapper = mapper;
         }
 
         [Route("Create")]
         [HttpPost]
         public IActionResult Create([FromBody]Offer Model)
         {
-            var offer = _repos.Add(Model);
+            var offer = _mapper.Map<OfferDBO>(Model);
+            
+            offer = _repos.Add(offer);
             if (offer == null)
             {
                 return BadRequest(new { message = "Error Occured" });
@@ -42,14 +47,19 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Offer> GetAll()
         {
-            return _repos.GetAll();
+            List<Offer> Offers = new List<Offer>();
+            foreach (var offer in _repos.GetAll())
+            {
+                Offers.Add(_mapper.Map<Offer>(offer));
+            }
+            return Offers;
         }
 
         [Route("{id}")]
         [HttpGet]
         public Offer GetByID(int id)
         {
-            return _repos.GetByID(id);
+            return _mapper.Map<Offer>(_repos.GetByID(id));
         }
         [Route("Cancel/{id}")]
         [HttpGet]
@@ -68,7 +78,7 @@ namespace CodeFirst.Controllers
 
         [Route("Search")]
         [HttpGet]
-        public List<Offer> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
+        public List<OfferDBO> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
         {
             return _repos.FilterOffer(source,destination,seats);
         }

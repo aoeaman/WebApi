@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Concerns
+namespace CarPool.Data.Models
 {
-    public class Booking
+    public class BookingDBO
     {
         [Key]
         public int ID { get; set; }
@@ -21,7 +21,7 @@ namespace CarPoolApplication.Concerns
         [Required]
         public byte Seats { get; set; }
         public bool IsActive { get; set; }
-        public virtual User User { get; set; }
-        public virtual Offer Offer { get; set; }
+        public virtual UserDBO User { get; set; }
+        public virtual OfferDBO Offer { get; set; }
     }
 }

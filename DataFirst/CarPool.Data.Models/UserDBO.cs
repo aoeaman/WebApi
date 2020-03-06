@@ -1,21 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarPoolApplication.Concerns
+namespace CarPool.Data.Models
 {
-    public class User
+    public class UserDBO
     {
-        public User()
+        public UserDBO()
         {
-            Bookings = new HashSet<Booking>();
+            Bookings = new HashSet<BookingDBO>();
 
-            Offers = new HashSet<Offer>();
+            Offers = new HashSet<OfferDBO>();
 
-            Vehicles = new HashSet<Vehicle>();
+            Vehicles = new HashSet<VehicleDBO>();
         }
-
-       
+    
         [Key]
         public int ID { get; set; }       
         public string Name { get; set; }
@@ -29,9 +27,9 @@ namespace CarPoolApplication.Concerns
         public string PhoneNumber { get; set; }
         public string DrivingLiscenceNumber { get; set; }
         public bool IsActive { get; set; }
-        public virtual ICollection<Booking> Bookings { get; set; }
-        public virtual ICollection<Offer> Offers { get; set; }
-        public virtual ICollection<Vehicle> Vehicles { get; set; }
+        public virtual ICollection<BookingDBO> Bookings { get; set; }
+        public virtual ICollection<OfferDBO> Offers { get; set; }
+        public virtual ICollection<VehicleDBO> Vehicles { get; set; }
 
         public string Role { get; set; }
         public string Token { get; set; }

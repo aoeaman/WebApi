@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CarPoolApplication.Helpers
+namespace CarPool.Helpers
 {
     public class Login
     {

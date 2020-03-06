@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using CarPoolApplication.Concerns;
-using CodeFirst.Models;
-using CodeFirst.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using CarPool.Data.Models;
+using CarPool.Services.Contracts;
+using CarPool.Helpers;
 
-namespace CarPoolApplication.Services
+namespace CarPool.Services.Providers
 {
     public class BookingService : IBookingService
     {
@@ -33,7 +33,7 @@ namespace CarPoolApplication.Services
             }
         }
 
-        public Booking Add(Booking entity)
+        public BookingDBO Add(BookingDBO entity)
         {
             try
             {               
@@ -50,7 +50,7 @@ namespace CarPoolApplication.Services
 
         }
 
-        public List<Booking> GetAll()
+        public List<BookingDBO> GetAll()
         {
             try
             {
@@ -63,7 +63,7 @@ namespace CarPoolApplication.Services
             
         }
 
-        public List<Booking> Requests(int id)
+        public List<BookingDBO> Requests(int id)
         {          
             return _context.Bookings.ToList().FindAll(b => b.OfferID == id && b.Status == StatusOfRide.Pending);
         }
@@ -83,7 +83,7 @@ namespace CarPoolApplication.Services
            
         }
 
-        public Booking GetByID(int id)
+        public BookingDBO GetByID(int id)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace CarPoolApplication.Services
             
         }
 
-        public IList<Booking> GetByRiderID(int id)
+        public IList<BookingDBO> GetByRiderID(int id)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace CarPoolApplication.Services
             
         }
 
-        public IList<Booking> GetByOfferID(int id)
+        public IList<BookingDBO> GetByOfferID(int id)
         {
             try
             {
