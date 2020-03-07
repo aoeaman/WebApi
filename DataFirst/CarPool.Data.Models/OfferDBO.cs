@@ -35,6 +35,7 @@ namespace CarPool.Data.Models
         public byte SeatsAvailable { get; set; }
         public bool IsActive { get; set; }
         public float Earnings { get; set; }
+        public virtual VehicleDBO Vehicle { get; set; }
         [Required]
         public virtual ICollection< ViaPointsDBO> ViaPoints { get; set; }      
     }

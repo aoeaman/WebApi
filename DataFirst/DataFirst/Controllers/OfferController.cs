@@ -8,7 +8,7 @@ using CarPool.Application.Models;
 
 namespace CodeFirst.Controllers
 {
-    [Authorize(Roles = Role.User)]
+    [Authorize]
     [Route("api/[Controller]")]
     public class OfferController:Controller
     {
@@ -25,7 +25,6 @@ namespace CodeFirst.Controllers
         public IActionResult Create([FromBody]Offer Model)
         {
             var offer = _mapper.Map<OfferDBO>(Model);
-            
             offer = _repos.Add(offer);
             if (offer == null)
             {
@@ -78,9 +77,14 @@ namespace CodeFirst.Controllers
 
         [Route("Search")]
         [HttpGet]
-        public List<OfferDBO> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
+        public List<Offer> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
         {
-            return _repos.FilterOffer(source,destination,seats);
+            List<Offer> Offers = new List<Offer>();
+            foreach(var offer in _repos.FilterOffer(source, destination, seats))
+            {
+                Offers.Add(_mapper.Map<Offer>(offer));
+            }
+            return Offers;
         }
     }
 }
