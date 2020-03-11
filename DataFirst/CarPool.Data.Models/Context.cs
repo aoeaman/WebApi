@@ -2,7 +2,7 @@
 using CarPool.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarPool.Helpers
+namespace CodeFirst
 {
     public partial class Context : DbContext
     {

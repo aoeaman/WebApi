@@ -22,7 +22,7 @@ namespace CarPool.Data.Models
         [Required]
         public string Password { get; set; }
         public char Gender { get; set; }
-        public byte Age { get; set; }
+        public int Age { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
         public string DrivingLiscenceNumber { get; set; }

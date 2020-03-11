@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using CarPool.Application.Models;
 using CarPool.Data.Models;
 
 namespace CarPool.Services.Contracts
 {
-    public interface IBookingService : IBaseService<BookingDBO>
+    public interface IBookingService : IBaseService<Booking>
     {
-        IList<BookingDBO> GetByRiderID(int id);
+        IList<Booking> GetByRiderID(int id);
 
         string UpdateStatus(int id, StatusOfRide status);       
-        IList<BookingDBO> GetByOfferID(int id);
-        List<BookingDBO> Requests(int id);
+        IList<Booking> GetByOfferID(int id);
+        List<Booking> Requests(int id);
     }
 }

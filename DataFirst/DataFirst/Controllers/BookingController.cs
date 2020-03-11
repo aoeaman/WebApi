@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CarPool.Services.Contracts;
-using CarPool.Data.Models;
 using CarPool.Application.Models;
 using AutoMapper;
+using CarPool.Data.Models;
 
 namespace CodeFirst.Controllers
 {
@@ -13,18 +13,17 @@ namespace CodeFirst.Controllers
     public class BookingController:Controller
     {
         private readonly IBookingService _repos;
-        private readonly IMapper _mapper;
-        public BookingController(IBookingService repos,IMapper mapper)
+        public BookingController(IBookingService repos)
         {
             _repos = repos;
-            _mapper = mapper;
+            
         }
 
         [Route("Create")]
         [HttpPost]
         public IActionResult Create([FromBody]Booking Model)
         {
-            var booking = _repos.Add(_mapper.Map<BookingDBO>(Model));
+            var booking = _repos.Add(Model);
 
             if (booking == null)
             {
@@ -33,36 +32,28 @@ namespace CodeFirst.Controllers
             return Ok(new { message = booking.ID });
         }
 
-        [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = CarPool.Helpers.Role.Admin)]
         [Route("GetAll")]
         [HttpGet]
         public List<Booking> GetAll()
         {
-            List<Booking> Bookings = new List<Booking>();
-            foreach(var booking in _repos.GetAll())
-            {
-                Bookings.Add(_mapper.Map<Booking>(booking));
-            }
-            return Bookings;
+            
+            return _repos.GetAll();
         }
 
         [Route("{id}")]
         [HttpGet]
         public Booking GetByID(int id)
         {
-            return _mapper.Map<Booking>(_repos.GetByID(id));
+            return _repos.GetByID(id);
         }
 
         [Route("{id:int}/Rider")]
         [HttpGet]
         public IList<Booking> GetUserBookings(int id)
         {
-            List<Booking> Bookings = new List<Booking>();
-            foreach (var booking in _repos.GetByRiderID(id))
-            {
-                Bookings.Add(_mapper.Map<Booking>(booking));
-            }
-            return Bookings;
+           
+            return _repos.GetByRiderID(id);
         }
 
         [Route("Delete/{id}")]
@@ -104,24 +95,16 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Booking> GetAll(int id)
         {
-            List<Booking> Bookings = new List<Booking>();
-            foreach (var booking in _repos.Requests(id))
-            {
-                Bookings.Add(_mapper.Map<Booking>(booking));
-            }
-            return Bookings;
+ 
+            return _repos.Requests(id);
         }
 
         [Route("{id:int}/Offer")]
         [HttpGet]
         public IList<Booking> OfferID(int id)
         {
-            List<Booking> Bookings = new List<Booking>();
-            foreach (var booking in _repos.GetByOfferID(id))
-            {
-                Bookings.Add(_mapper.Map<Booking>(booking));
-            }
-            return Bookings;
+
+            return _repos.GetByOfferID(id);
         }       
     }
 }

@@ -20,8 +20,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoMapper\CarPool.AutoMapper.csproj" />
     <ProjectReference Include="..\CarPool.Helpers\CarPool.Helpers.csproj" />
     <ProjectReference Include="..\CarPool.Services\CarPool.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CarPool.Services.Contracts;
-using CarPool.Data.Models;
 using System.Collections.Generic;
 using AutoMapper;
 using CarPool.Application.Models;
@@ -12,20 +11,19 @@ namespace CodeFirst.Controllers
     [Route("api/[Controller]")]
     public class OfferController:Controller
     {
-        private readonly IMapper _mapper;
+  
         private readonly IOfferService _repos;
-        public OfferController(IOfferService repos,IMapper mapper)
+        public OfferController(IOfferService repos)
         {
             _repos = repos;
-            _mapper = mapper;
         }
 
         [Route("Create")]
         [HttpPost]
         public IActionResult Create([FromBody]Offer Model)
         {
-            var offer = _mapper.Map<OfferDBO>(Model);
-            offer = _repos.Add(offer);
+            
+            var offer = _repos.Add(Model);
             if (offer == null)
             {
                 return BadRequest(new { message = "Error Occured" });
@@ -46,45 +44,43 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Offer> GetAll()
         {
-            List<Offer> Offers = new List<Offer>();
-            foreach (var offer in _repos.GetAll())
-            {
-                Offers.Add(_mapper.Map<Offer>(offer));
-            }
-            return Offers;
+            return _repos.GetAll(); ;
         }
 
         [Route("{id}")]
         [HttpGet]
         public Offer GetByID(int id)
         {
-            return _mapper.Map<Offer>(_repos.GetByID(id));
+            return _repos.GetByID(id);
         }
         [Route("Cancel/{id}")]
         [HttpGet]
         public string Cancel(int id)
         {       
-                return _repos.UpdateStatus(id,StatusOfRide.Cancelled);            
+                return _repos.UpdateStatus(id, CarPool.Data.Models.StatusOfRide.Cancelled);            
         }
 
         [Route("Cancel/{id}")]
         [HttpGet]
         public string Complete(int id)
         {
-           return _repos.UpdateStatus(id, StatusOfRide.Completed);
+           return _repos.UpdateStatus(id, CarPool.Data.Models.StatusOfRide.Completed);
            
+        }
+
+        [Route("DriverOffer/{id:int}")]
+        [HttpGet]
+        public List<Offer> FilteredOffers(int id)
+        {
+
+            return _repos.GetByDriver(id) ;
         }
 
         [Route("Search")]
         [HttpGet]
-        public List<Offer> FilteredOffers([FromQuery] Cities source,Cities destination,int seats)
+        public List<Offer> FilteredOffers([FromQuery] CarPool.Data.Models.Cities source, CarPool.Data.Models.Cities destination,int seats)
         {
-            List<Offer> Offers = new List<Offer>();
-            foreach(var offer in _repos.FilterOffer(source, destination, seats))
-            {
-                Offers.Add(_mapper.Map<Offer>(offer));
-            }
-            return Offers;
+            return _repos.FilterOffer(source, destination, seats);
         }
     }
 }

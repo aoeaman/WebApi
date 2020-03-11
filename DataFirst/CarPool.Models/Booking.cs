@@ -9,6 +9,6 @@
         public int OfferID { get; set; }
         public int UserID { get; set; }       
         public float Fare { get; set; }
-        public byte Seats { get; set; }
+        public int Seats { get; set; }
     }
 }

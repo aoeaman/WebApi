@@ -4,44 +4,50 @@ using System.Linq;
 using CarPool.Helpers;
 using CarPool.Services.Contracts;
 using CarPool.Data.Models;
-using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+using CarPool.Application.Models;
+using CodeFirst;
 
 namespace CarPool.Services.Providers
 {
     public class OfferService:IOfferService
-
     {
-        private readonly IServiceScope _scope;
         readonly Context _context;
-        public OfferService(IServiceProvider service)
+        private readonly IMapper _mapper;
+        public OfferService(Context context,IMapper mapper)
         {
-            _scope = service.CreateScope();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            _context = context;
+            _mapper = mapper;
         }
-        public OfferDBO Add(OfferDBO offer)
+        public Offer Add(Offer offer)
         {
-
+            var _offer = _mapper.Map<OfferDBO>(offer);
             try
             {                
-                offer.CurrentLocaton = offer.Source;
-                offer.Status = StatusOfRide.Created;
-                offer.IsActive = true;
-                offer.Earnings = 0;
-                _context.Offers.Add(offer);
+                _offer.CurrentLocaton = _offer.Source;
+                _offer.Status = StatusOfRide.Created;
+                _offer.IsActive = true;
+                _offer.Earnings = 0;
+                _context.Offers.Add(_offer);
                 _context.SaveChanges();
-                return offer;
+                return _mapper.Map<Offer>(_offer);
             }
             catch (Exception)
             {
-                _context.Offers.Remove(offer);
+                _context.Offers.Remove(_offer);
                 return null;
             }            
         }
-        public List<OfferDBO> GetAll()
+        public List<Offer> GetAll()
         {
             try
             {
-                return _context.Offers.ToList();
+                List<Offer> Offers = new List<Offer>();
+                foreach (var offer in _context.Offers)
+                {
+                    Offers.Add(_mapper.Map<Offer>(offer));
+                }
+                return Offers;
             }
             catch (Exception)
             {
@@ -99,18 +105,18 @@ namespace CarPool.Services.Providers
                 return Status.Failed.ToString();
             }
         }
-        public OfferDBO GetByID(int id)
+        public Offer GetByID(int id)
         {
             try
             {
-                return _context.Offers.Find(id);
+                return _mapper.Map<Offer>(_context.Offers.Find(id));
             }
             catch (Exception)
             {
                 return null;
             }
         }
-        public OfferDBO Update(OfferDBO Offer)
+        public Offer Update(Offer Offer)
         {
             throw new NotImplementedException();
         }
@@ -126,7 +132,7 @@ namespace CarPool.Services.Providers
                 return Status.NotFound.ToString();
             }
         }
-        public List<OfferDBO> GetByDriver(int id)
+        public List<Offer> GetByDriver(int id)
         {
             try
             {
@@ -138,16 +144,16 @@ namespace CarPool.Services.Providers
             }
             
         }
-        public List<OfferDBO> FilterOffer(Cities source, Cities destination, int seats)
+        public List<Offer> FilterOffer(Cities source, Cities destination, int seats)
         {
             try
             {
-                List<OfferDBO> Offers = new List<OfferDBO>();
-                foreach (OfferDBO offer in GetAll().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
+                List<Offer> Offers = new List<Offer>();
+                foreach (OfferDBO offer in _context.Offers.ToList().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
                 {
                     if (ValidateOfferRoute(offer, source, destination, seats))
                     {
-                        Offers.Add(offer);
+                        Offers.Add(_mapper.Map<Offer>(offer));
                     }
                     else
                     {
@@ -162,7 +168,7 @@ namespace CarPool.Services.Providers
                 return null;
             }
         }
-        bool ValidateOfferRoute(OfferDBO offer,Cities source,Cities destination,int seats)
+        public bool ValidateOfferRoute(OfferDBO offer,Cities source,Cities destination,int seats)
         {        
             int MaxSeats = offer.SeatsAvailable;
             List<Cities> Route = _context.ViaPoints.Where(P => P.OfferID == offer.ID).Select(p => p.City).ToList();

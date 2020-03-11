@@ -1,9 +1,9 @@
-﻿using CarPool.Data.Models;
+﻿using CarPool.Application.Models;
 
 namespace CarPool.Services.Contracts
 {
-    public interface IUserService : IBaseService<UserDBO>
+    public interface IUserService : IBaseService<User>
     {
-       UserDBO Authenticate(string username, string password);
+       User Authenticate(string username, string password);
     }
 }

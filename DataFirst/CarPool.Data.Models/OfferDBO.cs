@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CarPool.Application.Models;
 
 namespace CarPool.Data.Models
 {
@@ -32,7 +33,7 @@ namespace CarPool.Data.Models
         [Required]
         public DateTime EndDate { get; set; }
         [Required]
-        public byte SeatsAvailable { get; set; }
+        public int SeatsAvailable { get; set; }
         public bool IsActive { get; set; }
         public float Earnings { get; set; }
         public virtual VehicleDBO Vehicle { get; set; }

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using CarPool.Services.Contracts;
-using CarPool.Data.Models;
 using CarPool.Helpers;
 using AutoMapper;
 using CarPool.Application.Models;
@@ -14,20 +13,17 @@ namespace CodeFirst.Controllers
     public class UserController :Controller
     {
         private readonly IUserService _repos;
-        private readonly IMapper _mapper;
-        public UserController(IUserService repos,IMapper mapper)
+        public UserController(IUserService repos)
         {
             _repos = repos;
-            _mapper = mapper;
         }
 
         [Route("Signup")]
         [AllowAnonymous]
         [HttpPost]       
         public IActionResult Create([FromBody] User Model)
-        {
-            var UserDbo = _mapper.Map<UserDBO>(Model);
-            var user = _repos.Add(UserDbo);
+        {           
+            var user = _repos.Add(Model);
             if (user == null)
                 return BadRequest(new { message = "Username Already Exists" });
 
@@ -51,19 +47,15 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<User> GetAll()
         {           
-            List<User> Users = new List<User>();
-            foreach(var user in _repos.GetAll())
-            {
-                Users.Add(_mapper.Map<User>(user));
-            }
-            return Users;
+            
+            return _repos.GetAll();
         }
 
         [Route("{id}")]
         [HttpGet]
         public User GetByID(int id)
         {
-            return _mapper.Map<User>(_repos.GetByID(id));
+            return _repos.GetByID(id);
         }
 
         [Route("delete/{id}")]

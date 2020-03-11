@@ -1,10 +1,10 @@
 ﻿using CarPool.Services.Contracts;
-using CarPool.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using AutoMapper;
 using CarPool.Application.Models;
+using CarPool.Helpers;
 
 namespace CodeFirst.Controllers
 {
@@ -13,18 +13,16 @@ namespace CodeFirst.Controllers
     public class VehicleController:Controller
     {
         private readonly IVehicleService _repos;
-        private readonly IMapper _mapper;
-        public VehicleController(IVehicleService repos,IMapper mapper)
+        public VehicleController(IVehicleService repos)
         {
             _repos = repos;
-            _mapper = mapper;
         }
         
         [Route("Create")]
         [HttpPost]
         public IActionResult Create([FromBody] Vehicle Model)
         {
-            var vehicle = _repos.Add(_mapper.Map<VehicleDBO>(Model));
+            var vehicle = _repos.Add(Model);
             if (vehicle == null)
             {
                 return BadRequest(new { message = "Error Occured" });
@@ -36,19 +34,15 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Vehicle> GetAll()
         {
-            List<Vehicle> Vehicles = new List<Vehicle>();
-            foreach(var vehicle in _repos.GetAll())
-            {
-                Vehicles.Add(_mapper.Map<Vehicle>(vehicle));
-            }
-            return Vehicles;
+            
+            return _repos.GetAll(); ;
         }
 
         [Route("{id:int}")]
         [HttpGet]
         public Vehicle GetByID(int id)
         {
-            return _mapper.Map<Vehicle>(_repos.GetByID(id));
+            return _repos.GetByID(id);
         }
 
         [Route("Disable/{id:int}")]

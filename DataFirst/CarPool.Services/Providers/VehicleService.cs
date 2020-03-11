@@ -4,32 +4,36 @@ using System.Linq;
 using CarPool.Helpers;
 using CarPool.Services.Contracts;
 using CarPool.Data.Models;
-using Microsoft.Extensions.DependencyInjection;
+using CarPool.Application.Models;
+using AutoMapper;
+using CodeFirst;
 
 namespace CarPool.Services.Providers
 {
     public class VehicleService:IVehicleService
     {
-        private readonly IServiceScope _scope;
         readonly Context _context;
-        public VehicleService(IServiceProvider service)
+        private readonly IMapper _mapper;
+
+        public VehicleService(Context context, IMapper mapper)
         {
-            _scope = service.CreateScope();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            _context = context;
+            _mapper = mapper;
         }
-        public VehicleDBO Add(VehicleDBO vehicle)
-        {          
+        public Vehicle Add(Vehicle vehicle)
+        {
+            VehicleDBO _vehicle = _mapper.Map<VehicleDBO>(vehicle);
             try
-            {               
-                vehicle.IsActive = true;
-                _context.Vehicles.Add(vehicle);
+            {   
+                _vehicle.IsActive = true;             
+                _context.Vehicles.Add(_vehicle);
                 _context.SaveChanges();
-                return vehicle;
+                return _mapper.Map<Vehicle>(_vehicle);
 
             }
             catch (Exception)
             {
-                _context.Vehicles.Remove(vehicle);
+                _context.Vehicles.Remove(_vehicle);
                 return null;
             }
         }
@@ -37,7 +41,7 @@ namespace CarPool.Services.Providers
         {
             try
             {
-                _context.Vehicles.Remove(GetByID(id));
+                _context.Vehicles.Remove(_mapper.Map<VehicleDBO>(GetByID(id)));
                 return Status.Ok.ToString();
             }
             catch (Exception)
@@ -47,22 +51,27 @@ namespace CarPool.Services.Providers
             
         }
 
-        public List<VehicleDBO> GetAll()
+        public List<Vehicle> GetAll()
         {
             try
             {
-                return _context.Vehicles.ToList();
+                List<Vehicle> Vehicles = new List<Vehicle>();
+                foreach (var vehicle in _context.Vehicles)
+                {
+                    Vehicles.Add(_mapper.Map<Vehicle>(vehicle));
+                }
+                return Vehicles;
             }
             catch
             {             
                 return null;           
             }
         }
-        public VehicleDBO GetByID(int id)
+        public Vehicle GetByID(int id)
         {
             try
-            { 
-            return _context.Vehicles.Find(id);
+            {
+                return _mapper.Map<Vehicle>(_context.Vehicles.Find(id));
             }
             catch (Exception)
             {

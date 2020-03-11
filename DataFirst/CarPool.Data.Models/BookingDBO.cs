@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CarPool.Application.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarPool.Data.Models
@@ -19,7 +20,7 @@ namespace CarPool.Data.Models
         [Required]
         public float Fare { get; set; }
         [Required]
-        public byte Seats { get; set; }
+        public int Seats { get; set; }
         public bool IsActive { get; set; }
         public virtual UserDBO User { get; set; }
         public virtual OfferDBO Offer { get; set; }

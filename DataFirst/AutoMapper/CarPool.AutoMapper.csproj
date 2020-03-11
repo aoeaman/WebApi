@@ -1,11 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarPool.Helpers\CarPool.Helpers.csproj" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarPool.Data.Models\CarPool.Data.Models.csproj" />
     <ProjectReference Include="..\CarPool.Models\CarPool.Application.Models.csproj" />
   </ItemGroup>
 

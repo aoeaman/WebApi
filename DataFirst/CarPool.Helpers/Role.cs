@@ -1,4 +1,4 @@
-﻿namespace CarPool.Data.Models
+﻿namespace CarPool.Helpers
 {
     public static class Role
     {

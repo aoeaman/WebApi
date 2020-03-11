@@ -11,6 +11,7 @@ using CarPool.Services.Providers;
 using CarPool.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using CarPool.Automapper;
 
 namespace CodeFirst
 {

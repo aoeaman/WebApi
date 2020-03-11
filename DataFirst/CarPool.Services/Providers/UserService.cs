@@ -10,35 +10,40 @@ using System.Security.Claims;
 using CarPool.Data.Models;
 using CarPool.Services.Contracts;
 using CarPool.Helpers;
+using CarPool.Application.Models;
+using AutoMapper;
+using CodeFirst;
 
 namespace CarPool.Services.Providers
 {
     public class UserService : IUserService
     {
-        readonly IServiceScope _scope;
         private readonly AppSettings _appSettings;
         readonly Context _context;
+        private readonly IMapper _mapper;
 
-        public UserService(IServiceProvider service,IOptions<AppSettings> appSettings)
+        public UserService(Context context,IOptions<AppSettings> appSettings,IMapper mapper)
         {          
-            _scope = service.CreateScope();
             _appSettings = appSettings.Value;
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            _context = context;
+            _mapper = mapper;
         }
-        public UserDBO Add(UserDBO user)
+        public User Add(User user)
         {
+            var _user = _mapper.Map<UserDBO>(user);
             try
             {
-                user.Role = user.DrivingLiscenceNumber == null ?Role.User :Role.Admin;
-              
-                user.IsActive = true;
-                _context.Users.Add(user);
+
+                _user.Role = user.DrivingLiscenceNumber == null ?Role.User :Role.Admin;
+
+                _user.IsActive = true;
+                _context.Users.Add(_user);
                 _context.SaveChanges();
-                return user;
+                return _mapper.Map<User>(_user);
             }
             catch (Exception)
             {
-                _context.Users.Remove(user);
+                _context.Users.Remove(_user);
                 return null;
             }
 
@@ -63,11 +68,16 @@ namespace CarPool.Services.Providers
             }
             
         }
-        public List<UserDBO> GetAll()
+        public List<User> GetAll()
         {
             try
             {
-                return _context.Users.ToList().WithoutPasswords();
+                List<User> Users = new List<User>();
+                foreach (var user in _context.Users)
+                {
+                    Users.Add(_mapper.Map<User>(user));
+                }
+                return Users.WithoutPasswords();
             }
             catch (Exception)
             {
@@ -75,18 +85,18 @@ namespace CarPool.Services.Providers
             }
             
         }
-        public UserDBO GetByID(int id)
+        public User GetByID(int id)
         {
             try
             {
-                return _context.Users.Find(id).WithoutPassword();
+                return _mapper.Map<User>(_context.Users.Find(id)).WithoutPassword();
             }
             catch (Exception)
             {
                 return null;
             }           
         }
-        public UserDBO Authenticate(string username, string password)
+        public User Authenticate(string username, string password)
         {
             try
             {
@@ -112,7 +122,7 @@ namespace CarPool.Services.Providers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 user.Token = tokenHandler.WriteToken(token);
 
-                return user.WithoutPassword();
+                return _mapper.Map < User > (user).WithoutPassword();
             }
             catch (Exception)
             {

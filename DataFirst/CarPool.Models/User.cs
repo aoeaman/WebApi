@@ -7,7 +7,7 @@
         public string Username { get; set; }
         public string Password { get; set; }
         public char Gender { get; set; }
-        public byte Age { get; set; }
+        public int Age { get; set; }
         public string PhoneNumber { get; set; }
         public string DrivingLiscenceNumber { get; set; }
     }

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CarPool.Migrations
+namespace CarPoolApplication.Migrations
 {
-    public partial class fina : Migration
+    public partial class ltest : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,10 +17,12 @@ namespace CarPool.Migrations
                     Username = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
                     Gender = table.Column<string>(nullable: false),
-                    Age = table.Column<byte>(nullable: false),
+                    Age = table.Column<int>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: false),
                     DrivingLiscenceNumber = table.Column<string>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false)
+                    IsActive = table.Column<bool>(nullable: false),
+                    Role = table.Column<string>(nullable: true),
+                    Token = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,7 +38,7 @@ namespace CarPool.Migrations
                     UserID = table.Column<int>(nullable: false),
                     Maker = table.Column<string>(nullable: true),
                     Number = table.Column<string>(nullable: true),
-                    Seats = table.Column<byte>(nullable: false),
+                    Seats = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     Type = table.Column<string>(nullable: false)
                 },
@@ -65,7 +67,7 @@ namespace CarPool.Migrations
                     CurrentLocaton = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     StartDate = table.Column<DateTime>(nullable: false),
                     EndDate = table.Column<DateTime>(nullable: false),
-                    SeatsAvailable = table.Column<byte>(nullable: false),
+                    SeatsAvailable = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     Earnings = table.Column<float>(nullable: false)
                 },
@@ -77,13 +79,13 @@ namespace CarPool.Migrations
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Offers_Vehicles_VehicleID",
                         column: x => x.VehicleID,
                         principalTable: "Vehicles",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,7 +100,7 @@ namespace CarPool.Migrations
                     OfferID = table.Column<int>(nullable: false),
                     UserID = table.Column<int>(nullable: false),
                     Fare = table.Column<float>(nullable: false),
-                    Seats = table.Column<byte>(nullable: false),
+                    Seats = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -115,7 +117,7 @@ namespace CarPool.Migrations
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -135,7 +137,7 @@ namespace CarPool.Migrations
                         column: x => x.OfferID,
                         principalTable: "Offers",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

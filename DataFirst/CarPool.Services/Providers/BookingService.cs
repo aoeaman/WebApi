@@ -4,57 +4,55 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using CarPool.Data.Models;
 using CarPool.Services.Contracts;
-using CarPool.Helpers;
+using CodeFirst;
+using CarPool.Application.Models;
+using AutoMapper;
 
 namespace CarPool.Services.Providers
 {
     public class BookingService : IBookingService
     {
-        private readonly IServiceScope _scope;
         readonly Context _context;
-        public BookingService(IServiceProvider service)
+        private readonly IMapper _mapper;
+        private readonly IOfferService _offerservice;
+
+        public BookingService(Context context, IMapper mapper,IOfferService offerService)
         {
-            _scope = service.CreateScope();
-            _context = _scope.ServiceProvider.GetRequiredService<Context>();
+            _context = context;
+            _mapper = mapper;
+            _offerservice = offerService;
         }
 
-        public string UpdateStatus(int id, StatusOfRide status)
-        {
-            
-            try
-            {
-                GetByID(id).Status = status;
-                _context.SaveChanges();
-                return Status.Ok.ToString();
-            }
-            catch (Exception)
-            {
-                return Status.NotFound.ToString();
-            }
-        }
 
-        public BookingDBO Add(BookingDBO entity)
+        public Booking Add(Booking entity)
         {
+            var _entity = _mapper.Map<BookingDBO>(entity);
             try
             {               
-                entity.Status = StatusOfRide.Pending;
-                entity.IsActive = true;
-                _context.Bookings.Add(entity);
+                _entity.Status = StatusOfRide.Pending;
+                _entity.IsActive = true;
+                _context.Bookings.Add(_entity);
                 _context.SaveChanges();
-                return entity;
+                return _mapper.Map<Booking>(_entity);
             }
             catch (Exception)
             {
+                _context.Bookings.Remove(_entity);
                 return null;
             }
 
         }
 
-        public List<BookingDBO> GetAll()
+        public List<Booking> GetAll()
         {
             try
             {
-                return _context.Bookings.ToList();
+                List<Booking> Bookings = new List<Booking>();
+                foreach (var booking in _context.Bookings)
+                {
+                    Bookings.Add(_mapper.Map<Booking>(booking));
+                }
+                return Bookings.ToList();
             }
             catch (Exception)
             {
@@ -63,9 +61,14 @@ namespace CarPool.Services.Providers
             
         }
 
-        public List<BookingDBO> Requests(int id)
-        {          
-            return _context.Bookings.ToList().FindAll(b => b.OfferID == id && b.Status == StatusOfRide.Pending);
+        public List<Booking> Requests(int id)
+        {
+            List<Booking> Bookings = new List<Booking>();
+            foreach (var booking in _context.Bookings.ToList().FindAll(b => b.OfferID == id && b.Status == StatusOfRide.Pending))
+            {
+                Bookings.Add(_mapper.Map<Booking>(booking));
+            }
+            return Bookings;
         }
         public string Delete(int id)
         {
@@ -83,11 +86,11 @@ namespace CarPool.Services.Providers
            
         }
 
-        public BookingDBO GetByID(int id)
+        public Booking GetByID(int id)
         {
             try
             {
-                return _context.Bookings.Find(id);
+                return _mapper.Map<Booking>(_context.Bookings.Find(id));
             }
             catch
             {
@@ -96,11 +99,16 @@ namespace CarPool.Services.Providers
             
         }
 
-        public IList<BookingDBO> GetByRiderID(int id)
+        public IList<Booking> GetByRiderID(int id)
         {
             try
             {
-                return _context.Bookings.ToList().FindAll(b => b.UserID == id);
+                List<Booking> Bookings = new List<Booking>();
+                foreach (var booking in _context.Bookings.ToList().FindAll(b => b.UserID == id))
+                {
+                    Bookings.Add(_mapper.Map<Booking>(booking));
+                }
+                return Bookings;
             }
             catch
             {
@@ -109,17 +117,45 @@ namespace CarPool.Services.Providers
             
         }
 
-        public IList<BookingDBO> GetByOfferID(int id)
+        public IList<Booking> GetByOfferID(int id)
         {
             try
             {
-                return _context.Bookings.ToList().FindAll(b => b.OfferID == id);
+                List<Booking> Bookings = new List<Booking>();
+                foreach (var booking in _context.Bookings.ToList().FindAll(b => b.OfferID == id))
+                {
+                    Bookings.Add(_mapper.Map<Booking>(booking));
+                }
+                return Bookings;
             }
             catch
             {
                 return null;
             }
             
+        }
+
+        public string UpdateStatus(int id, StatusOfRide status)
+        {
+            try
+            {
+                var booking = _context.Bookings.Find(Convert.ToInt32(id));
+                if (_offerservice.ValidateOfferRoute(_context.Offers.Find(booking.OfferID), booking.Source, booking.Destination, booking.Seats))
+                {
+                    booking.Status = status;
+                    _context.SaveChanges();
+                    return Status.Ok.ToString();
+                }
+                else
+                {
+                    return Status.UnableToPerformAction.ToString();
+                }
+
+            }
+            catch (Exception)
+            {
+                return Status.NotFound.ToString();
+            }
         }
     }
 
