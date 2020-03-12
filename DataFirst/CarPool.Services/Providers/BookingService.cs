@@ -139,22 +139,47 @@ namespace CarPool.Services.Providers
         {
             try
             {
-                var booking = _context.Bookings.Find(Convert.ToInt32(id));
-                if (_offerservice.ValidateOfferRoute(_context.Offers.Find(booking.OfferID), booking.Source, booking.Destination, booking.Seats))
+                var booking = _context.Bookings.Find(id);
+                switch (status)
                 {
-                    booking.Status = status;
-                    _context.SaveChanges();
-                    return Status.Ok.ToString();
-                }
-                else
-                {
-                    return Status.UnableToPerformAction.ToString();
-                }
+                    case StatusOfRide.Cancelled:
+                        if (booking.Status == StatusOfRide.Pending)
+                        {
+                            booking.Status = status;
+                            return Status.Ok.ToString();
+                        }
+                        else
+                        {
+                            return Status.UnableToPerformAction.ToString();
+                        }
 
+                    case StatusOfRide.Rejected:
+                        if (booking.Status == StatusOfRide.Pending)
+                        {
+                            booking.Status = status;
+                            return Status.Ok.ToString();
+                        }
+                        else
+                        {
+                            return Status.UnableToPerformAction.ToString();
+                        }
+                    case StatusOfRide.Accepted:
+                        if (_offerservice.ValidateOfferRoute(_context.Offers.Find(booking.OfferID), booking.Source, booking.Destination, booking.Seats))
+                        {
+                            booking.Status = status;
+                            _context.SaveChanges();
+                            return Status.Ok.ToString();
+                        }
+                        else
+                        {
+                            return Status.UnableToPerformAction.ToString();
+                        }
+                }
+                return Status.NotFound.ToString();
             }
             catch (Exception)
             {
-                return Status.NotFound.ToString();
+                return Status.Failed.ToString();
             }
         }
     }
