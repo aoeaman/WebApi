@@ -5,6 +5,7 @@ using CarPool.Services.Contracts;
 using CarPool.Helpers;
 using AutoMapper;
 using CarPool.Application.Models;
+using System;
 
 namespace CodeFirst.Controllers
 {
@@ -35,10 +36,10 @@ namespace CodeFirst.Controllers
         [AllowAnonymous]
         public IActionResult Authenticate([FromBody]Login model)
         {
-            var user = _repos.Authenticate(model.Username, model.Password);
+            string user =  _repos.Authenticate(model.Username, model.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(user);
 
             return Ok(user);
         }

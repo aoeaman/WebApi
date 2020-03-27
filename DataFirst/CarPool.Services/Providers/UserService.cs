@@ -96,7 +96,7 @@ namespace CarPool.Services.Providers
                 return null;
             }           
         }
-        public User Authenticate(string username, string password)
+        public string Authenticate(string username, string password)
         {
             try
             {
@@ -122,9 +122,9 @@ namespace CarPool.Services.Providers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 user.Token = tokenHandler.WriteToken(token);
 
-                return _mapper.Map < User > (user).WithoutPassword();
+                return user.Token;
             }
-            catch (Exception)
+            catch
             {
                 return null;
             }

@@ -25,7 +25,7 @@ namespace CodeFirst
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\aman.j\\Documents\\CARPOOL.mdf;Integrated Security=True;Connect Timeout=30");
+                optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Aman\\Documents\\CarPool.mdf;Integrated Security=True;Connect Timeout=30");
             }
         }
 

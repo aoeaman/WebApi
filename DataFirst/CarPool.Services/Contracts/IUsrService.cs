@@ -1,9 +1,11 @@
 ﻿using CarPool.Application.Models;
+using System;
+using System.Collections.Generic;
 
 namespace CarPool.Services.Contracts
 {
     public interface IUserService : IBaseService<User>
     {
-       User Authenticate(string username, string password);
+        string Authenticate(string username, string password);
     }
 }
