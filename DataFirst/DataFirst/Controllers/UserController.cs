@@ -52,7 +52,7 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("{id}")]
+        [Route("{/id}")]
         [HttpGet]
         public User GetByID(int id)
         {
