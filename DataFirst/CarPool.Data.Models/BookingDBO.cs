@@ -1,4 +1,5 @@
 ﻿using CarPool.Application.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,7 +17,9 @@ namespace CarPool.Data.Models
         [Column(TypeName = "nvarchar(15)")]
         public Cities Destination { get; set; }
         public int OfferID { get; set; }
-        public int UserID { get; set; }       
+        public int UserID { get; set; }
+        [Required]
+        public DateTime StartDate { get; set; }
         [Required]
         public float Fare { get; set; }
         [Required]

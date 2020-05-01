@@ -31,8 +31,6 @@ namespace CarPool.Data.Models
         [Required]
         public DateTime StartDate { get; set; }
         [Required]
-        public DateTime EndDate { get; set; }
-        [Required]
         public int SeatsAvailable { get; set; }
         public bool IsActive { get; set; }
         public float Earnings { get; set; }

@@ -144,7 +144,7 @@ namespace CarPool.Services.Providers
             }
             
         }
-        public List<Offer> FilterOffer(Cities source, Cities destination, int seats)
+        public List<Offer> FilterOffer(Cities source, Cities destination, int seats ,DateTime dateTime)
         {
             try
             {

@@ -1,4 +1,6 @@
-﻿namespace CarPool.Application.Models
+﻿using System;
+
+namespace CarPool.Application.Models
 { 
     public class Booking
     {
@@ -10,5 +12,6 @@
         public int UserID { get; set; }       
         public float Fare { get; set; }
         public int Seats { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }

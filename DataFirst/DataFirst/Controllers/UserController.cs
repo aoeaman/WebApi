@@ -52,14 +52,14 @@ namespace CodeFirst.Controllers
             return _repos.GetAll();
         }
 
-        [Route("{/id}")]
+        [Route("{id:int}")]
         [HttpGet]
         public User GetByID(int id)
         {
             return _repos.GetByID(id);
         }
 
-        [Route("delete/{id}")]
+        [Route("delete/{id:int}")]
         [HttpPut]
         public string Delete(int id)
         {

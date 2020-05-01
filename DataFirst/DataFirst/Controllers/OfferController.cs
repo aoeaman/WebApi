@@ -4,6 +4,7 @@ using CarPool.Services.Contracts;
 using System.Collections.Generic;
 using AutoMapper;
 using CarPool.Application.Models;
+using System;
 
 namespace CodeFirst.Controllers
 {
@@ -72,15 +73,14 @@ namespace CodeFirst.Controllers
         [HttpGet]
         public List<Offer> FilteredOffers(int id)
         {
-
             return _repos.GetByDriver(id) ;
         }
 
         [Route("Search")]
         [HttpGet]
-        public List<Offer> FilteredOffers([FromQuery] CarPool.Data.Models.Cities source, CarPool.Data.Models.Cities destination,int seats)
+        public List<Offer> FilteredOffers([FromQuery] CarPool.Data.Models.Cities source, CarPool.Data.Models.Cities destination,int seats,DateTime dateTime)
         {
-            return _repos.FilterOffer(source, destination, seats);
+            return _repos.FilterOffer(source, destination, seats,dateTime);
         }
     }
 }
