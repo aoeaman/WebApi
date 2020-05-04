@@ -11,7 +11,6 @@ namespace CarPool.Application.Models
         public int Source { get; set; }
         public int Destination { get; set; }
         public string StartDate { get; set; }
-        public string EndDate { get; set; }
         public int SeatsAvailable { get; set; }
         public List<ViaPoints> ViaPoints { get; set; }      
     }

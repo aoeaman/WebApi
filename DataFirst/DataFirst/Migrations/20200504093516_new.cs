@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarPoolApplication.Migrations
 {
-    public partial class ltest : Migration
+    public partial class @new : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,7 +50,7 @@ namespace CarPoolApplication.Migrations
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -66,7 +66,6 @@ namespace CarPoolApplication.Migrations
                     Destination = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     CurrentLocaton = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     StartDate = table.Column<DateTime>(nullable: false),
-                    EndDate = table.Column<DateTime>(nullable: false),
                     SeatsAvailable = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     Earnings = table.Column<float>(nullable: false)
@@ -99,6 +98,7 @@ namespace CarPoolApplication.Migrations
                     Destination = table.Column<string>(type: "nvarchar(15)", nullable: false),
                     OfferID = table.Column<int>(nullable: false),
                     UserID = table.Column<int>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
                     Fare = table.Column<float>(nullable: false),
                     Seats = table.Column<int>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false)

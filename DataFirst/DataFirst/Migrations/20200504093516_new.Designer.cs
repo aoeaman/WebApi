@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarPoolApplication.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200311133822_ltest")]
-    partial class ltest
+    [Migration("20200504093516_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,9 @@ namespace CarPoolApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
@@ -81,9 +84,6 @@ namespace CarPoolApplication.Migrations
 
                     b.Property<float>("Earnings")
                         .HasColumnType("real");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

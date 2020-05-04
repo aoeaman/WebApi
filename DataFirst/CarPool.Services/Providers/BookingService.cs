@@ -31,6 +31,7 @@ namespace CarPool.Services.Providers
             {               
                 _entity.Status = StatusOfRide.Pending;
                 _entity.IsActive = true;
+                _entity.StartDate = _context.Offers.Find(entity.OfferID).StartDate;
                 _context.Bookings.Add(_entity);
                 _context.SaveChanges();
                 return _mapper.Map<Booking>(_entity);

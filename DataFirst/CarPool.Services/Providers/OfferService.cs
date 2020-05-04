@@ -149,7 +149,7 @@ namespace CarPool.Services.Providers
             try
             {
                 List<Offer> Offers = new List<Offer>();
-                foreach (OfferDBO offer in _context.Offers.ToList().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true))
+                foreach (OfferDBO offer in _context.Offers.ToList().FindAll(o => o.Status == StatusOfRide.Created && o.IsActive==true && o.StartDate>=dateTime))
                 {
                     if (ValidateOfferRoute(offer, source, destination, seats))
                     {

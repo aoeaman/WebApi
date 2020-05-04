@@ -46,6 +46,9 @@ namespace CarPoolApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
@@ -79,9 +82,6 @@ namespace CarPoolApplication.Migrations
 
                     b.Property<float>("Earnings")
                         .HasColumnType("real");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
